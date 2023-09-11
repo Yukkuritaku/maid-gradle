@@ -1,0 +1,40 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+group = 'com.github.yukkuritaku'
+version = '1.0-SNAPSHOT'
+
+configurations {
+    loom
+    compileOnly.extendsFrom(loom)
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'Fabric'
+        url = 'https://maven.fabricmc.net/'
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+    loom 'net.fabricmc:fabric-loom:1.3.9'
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+gradlePlugin {
+    plugins {
+        maidGradle {
+            id = 'maid-gradle'
+            implementationClass = 'com.github.yukkuritaku.maidgradle.bootstrap.MaidGradlePluginBootstrap'
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
