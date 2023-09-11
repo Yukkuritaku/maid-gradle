@@ -13,6 +13,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             MaidGradleTasks.class
     );
 
+
     @Override
     public void apply(PluginAware pluginAware) {
         if (pluginAware instanceof Project project){
