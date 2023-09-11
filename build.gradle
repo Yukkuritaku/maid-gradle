@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.github.yukkuritaku'
-version = '1.0-SNAPSHOT'
+version = '0.1-SNAPSHOT'
 
 configurations {
     loom
@@ -37,4 +37,29 @@ gradlePlugin {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    file(".env").readLines().each {
+        def (key, value) = it.tokenize('=')
+        System.setProperty(key, value)
+    }
+    repositories {
+        maven {
+            name = "GithubRepository"
+            url = uri("https://maven.pkg.github.com/Yukkuritaku/maid-gradle")
+            credentials {
+                username = System.getProperty("gpr_user")
+                password = System.getProperty("gpr_key")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            groupId = group
+            artifactId = name
+            version = version
+            from(components.java)
+        }
+    }
 }
