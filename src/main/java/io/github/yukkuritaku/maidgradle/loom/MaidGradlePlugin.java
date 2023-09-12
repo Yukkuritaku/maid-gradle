@@ -1,6 +1,6 @@
-package com.github.yukkuritaku.maidgradle.loom;
+package io.github.yukkuritaku.maidgradle.loom;
 
-import com.github.yukkuritaku.maidgradle.loom.task.MaidGradleTasks;
+import io.github.yukkuritaku.maidgradle.loom.task.MaidGradleTasks;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;

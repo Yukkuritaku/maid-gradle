@@ -1,10 +1,11 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '1.2.1'
 }
 
-group = 'com.github.yukkuritaku'
-version = '0.1-SNAPSHOT'
+group = 'io.github.yukkuritaku'
+version = '0.1'
 
 configurations {
     loom
@@ -27,39 +28,19 @@ dependencies {
 }
 
 gradlePlugin {
+    website = 'https://github.com/Yukkuritaku/maid-gradle'
+    vcsUrl = 'https://github.com/Yukkuritaku/maid-gradle.git'
     plugins {
         maidGradle {
-            id = 'maid-gradle'
-            implementationClass = 'com.github.yukkuritaku.maidgradle.bootstrap.MaidGradlePluginBootstrap'
+            id = 'io.github.yukkuritaku.maid-gradle'
+            displayName = "Maid-Gradle"
+            description = "Building LittleMaid Model for developers."
+            implementationClass = 'io.github.yukkuritaku.maidgradle.loom.bootstrap.MaidGradlePluginBootstrap'
+            tags.set(['littlemaid', 'modding'])
         }
     }
 }
 
 test {
     useJUnitPlatform()
-}
-
-publishing {
-    file(".env").readLines().each {
-        def (key, value) = it.tokenize('=')
-        System.setProperty(key, value)
-    }
-    repositories {
-        maven {
-            name = "GithubRepository"
-            url = uri("https://maven.pkg.github.com/Yukkuritaku/maid-gradle")
-            credentials {
-                username = System.getProperty("gpr_user")
-                password = System.getProperty("gpr_key")
-            }
-        }
-    }
-    publications {
-        gpr(MavenPublication) {
-            groupId = group
-            artifactId = name
-            version = version
-            from(components.java)
-        }
-    }
 }

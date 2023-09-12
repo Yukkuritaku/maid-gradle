@@ -1,4 +1,4 @@
-package com.github.yukkuritaku.maidgradle.loom.util;
+package io.github.yukkuritaku.maidgradle.loom.util;
 
 public final class MaidConstants {
 

@@ -1,4 +1,4 @@
-package com.github.yukkuritaku.maidgradle.loom.task;
+package io.github.yukkuritaku.maidgradle.loom.task;
 
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskContainer;
@@ -16,7 +16,7 @@ public abstract class MaidGradleTasks implements Runnable{
     @Override
     public void run() {
         getTasks().register("buildLittleMaidModel", BuildZippedLittleMaidModelTask.class, task -> {
-            task.dependsOn(getTasks().named("jar"));
+            task.dependsOn(getTasks().named("remapJar"));
             task.setDescription("Generate Zipped LittleMaid Model.");
         });
     }

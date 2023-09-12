@@ -1,4 +1,4 @@
-package com.github.yukkuritaku.maidgradle.loom.bootstrap;
+package io.github.yukkuritaku.maidgradle.loom.bootstrap;
 
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import org.gradle.api.Plugin;
