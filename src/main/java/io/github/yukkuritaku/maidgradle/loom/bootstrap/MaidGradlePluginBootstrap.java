@@ -9,7 +9,6 @@ public class MaidGradlePluginBootstrap implements Plugin<PluginAware> {
 
     private static final String PLUGIN_CLASS_NAME = "com.github.yukkuritaku.maidgradle.loom.MaidGradlePlugin";
 
-
     BootstrappedPlugin getActivePlugin() {
         try {
             return (BootstrappedPlugin)Class.forName(PLUGIN_CLASS_NAME).getConstructor().newInstance();

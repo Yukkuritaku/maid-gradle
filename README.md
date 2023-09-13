@@ -1,5 +1,5 @@
-# めいどぐらどる
+# Maid Gradle
 ---
-現在製作中です！
+Still Wip!
 
-今の所未実装が多く、実装しているのはモデルのZipビルドだけです。
+Currently, implemented task is zip build only.

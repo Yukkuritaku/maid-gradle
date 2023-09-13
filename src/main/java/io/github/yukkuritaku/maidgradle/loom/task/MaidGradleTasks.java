@@ -15,9 +15,13 @@ public abstract class MaidGradleTasks implements Runnable{
 
     @Override
     public void run() {
-        getTasks().register("buildLittleMaidModel", BuildZippedLittleMaidModelTask.class, task -> {
-            task.dependsOn(getTasks().named("remapJar"));
+        getTasks().register("buildLittleMaidModelZip", BuildLittleMaidModelZipTask.class, task -> {
+            task.dependsOn(getTasks().named("jar"));
             task.setDescription("Generate Zipped LittleMaid Model.");
+        });
+        getTasks().register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class, task -> {
+            task.mustRunAfter(getTasks().named("generateLog4jConfig"));
+            task.setDescription("Download LittleMaid Jar from dropbox.");
         });
     }
 }
