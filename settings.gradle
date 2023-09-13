@@ -11,5 +11,3 @@ pluginManagement {
 
 rootProject.name = 'maid-gradle'
 
-include("fabric-test")
-
