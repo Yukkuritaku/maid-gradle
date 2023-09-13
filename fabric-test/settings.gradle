@@ -1,3 +1,5 @@
 pluginManagement {
-    include '../'
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 }
