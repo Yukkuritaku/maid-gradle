@@ -1,10 +1,10 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
-    id 'com.gradle.plugin-publish' version '1.2.1'
+    //id 'com.gradle.plugin-publish' version '1.2.1'
 }
 
-group = 'io.github.yukkuritaku'
+group = 'com.github.yukkuritaku'
 version = '0.1'
 
 configurations {
@@ -35,7 +35,7 @@ gradlePlugin {
     vcsUrl = 'https://github.com/Yukkuritaku/maid-gradle.git'
     plugins {
         maidGradle {
-            id = 'io.github.yukkuritaku.maid-gradle'
+            id = 'com.github.yukkuritaku.maid-gradle'
             displayName = "Maid-Gradle"
             description = "Building LittleMaid Model for developers."
             implementationClass = 'io.github.yukkuritaku.maidgradle.loom.bootstrap.MaidGradlePluginBootstrap'
