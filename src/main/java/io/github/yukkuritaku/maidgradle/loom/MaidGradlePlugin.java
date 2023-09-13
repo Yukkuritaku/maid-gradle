@@ -24,7 +24,9 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 project.getLogger().error("This plugin is required to be put fabric-loom plugin below!");
             }
             project.getExtensions().create(MaidGradleExtensionAPI.class, "maidgradle", MaidGradleExtensionImpl.class, project);
-            SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
+            project.afterEvaluate(p -> {
+                SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
+            });
         }
     }
 }

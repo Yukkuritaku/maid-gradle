@@ -1,25 +1,13 @@
 package io.github.yukkuritaku.maidgradle.loom.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.api.MaidGradleExtensionAPI;
-import io.github.yukkuritaku.maidgradle.loom.metadata.Metadata;
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.util.Pair;
 import org.gradle.api.Project;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public final class MaidConstants {
 
