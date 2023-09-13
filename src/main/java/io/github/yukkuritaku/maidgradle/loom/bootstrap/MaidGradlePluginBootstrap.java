@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MaidGradlePluginBootstrap implements Plugin<PluginAware> {
 
-    private static final String PLUGIN_CLASS_NAME = "com.github.yukkuritaku.maidgradle.loom.MaidGradlePlugin";
+    private static final String PLUGIN_CLASS_NAME = "io.github.yukkuritaku.maidgradle.loom.MaidGradlePlugin";
 
     BootstrappedPlugin getActivePlugin() {
         try {
