@@ -13,8 +13,8 @@ import java.util.List;
 public class MaidGradlePlugin implements BootstrappedPlugin {
 
     private static final List<Class<? extends Runnable>> SETUP_JOBS = List.of(
-            MaidGradleConfigurations.class,
-            MaidGradleTasks.class
+            MaidGradleTasks.class,
+            MaidGradleConfigurations.class
     );
 
     @Override
