@@ -3,16 +3,12 @@ package io.github.yukkuritaku.maidgradle.loom.configuration;
 import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.util.Constants;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
-import org.gradle.api.plugins.JavaPlugin;
 
 import javax.inject.Inject;
-import java.util.Map;
 
 public abstract class MaidGradleConfigurations implements Runnable{
 

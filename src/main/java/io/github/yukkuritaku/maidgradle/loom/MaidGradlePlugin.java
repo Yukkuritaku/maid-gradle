@@ -20,8 +20,9 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
 
     @Override
     public void apply(PluginAware pluginAware) {
+        pluginAware.getPlugins().getPlugin(LoomGradlePluginBootstrap.class).apply(pluginAware);
         if (pluginAware instanceof Project project){
-            project.getPlugins().apply(LoomGradlePluginBootstrap.class);
+
             if (project.getExtensions().findByName("loom") == null){
                 project.getLogger().error("This plugin is required to be put fabric-loom plugin below!");
             }
