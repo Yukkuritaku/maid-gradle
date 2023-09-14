@@ -37,7 +37,7 @@ public abstract class MaidGradleConfigurations implements Runnable {
         try (ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidModelLoader");
              DownloadExecutor executor = new DownloadExecutor(2)
         ) {
-            String versionInfo = maidGradleExtension.getMinecraftVersion().get();
+            String versionInfo = maidGradleExtension.getMcVersion().get();
             maidGradleExtension
                     .download(MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(versionInfo, maidGradleExtension))
                     .progress(new GradleDownloadProgressListener("LittleMaidModelLoader", progressGroup::createProgressLogger))

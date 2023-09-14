@@ -12,7 +12,7 @@ public interface MaidGradleExtensionAPI {
      * Returns the value of Current Minecraft version.
      * @return Current Minecraft version
      */
-    Property<String> getMinecraftVersion();
+    Property<String> getMcVersion();
 
     /**
      * Returns the value of Current LittleMaidModelLoader version.

@@ -82,7 +82,7 @@ public final class MaidConstants {
         public static String getLittleMaidModelLoader(Project project){
             MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(project);
             return LITTLE_MAID_MODEL_LOADER +
-                    "-" + maidGradleExtension.getMinecraftVersion() +
+                    "-" + maidGradleExtension.getMcVersion() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
                     "-Fabric";
         }
@@ -90,7 +90,7 @@ public final class MaidConstants {
         public static String getLittleMaidReBirth(Project project){
             MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(project);
             return LITTLE_MAID_REBIRTH +
-                    "-" + maidGradleExtension.getMinecraftVersion() +
+                    "-" + maidGradleExtension.getMcVersion() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
                     "-Fabric";
         }

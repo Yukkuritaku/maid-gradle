@@ -20,7 +20,7 @@ public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
         try (ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidModelLoader");
              DownloadExecutor executor = new DownloadExecutor(2)
         ) {
-            String versionInfo = getMaidExtension().getMinecraftVersion().get();
+            String versionInfo = getMaidExtension().getMcVersion().get();
             getMaidExtension()
                     .download(MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(versionInfo, getMaidExtension()))
                     .progress(new GradleDownloadProgressListener("LittleMaidModelLoader", progressGroup::createProgressLogger))

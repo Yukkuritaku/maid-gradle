@@ -7,28 +7,23 @@ import org.gradle.api.provider.Property;
 
 public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionAPI {
 
-    protected final Property<String> minecraftVersion;
+    protected final Property<String> mcVersion;
     protected final Property<String> littleMaidModelLoaderVersion;
     protected final DirectoryProperty lmmlOutputDir;
     protected final Property<String> littleMaidReBirthVersion;
     protected final DirectoryProperty lmrbOutputDir;
 
     protected MaidGradleExtensionApiImpl(Project project){
-        this.minecraftVersion = project.getObjects().property(String.class);
-        this.minecraftVersion.finalizeValueOnRead();
+        this.mcVersion = project.getObjects().property(String.class);
         this.littleMaidModelLoaderVersion = project.getObjects().property(String.class);
-        this.littleMaidModelLoaderVersion.finalizeValueOnRead();
         this.lmmlOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-jar"));
-        this.lmmlOutputDir.finalizeValueOnRead();
         this.littleMaidReBirthVersion = project.getObjects().property(String.class);
-        this.littleMaidReBirthVersion.finalizeValueOnRead();
         this.lmrbOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmrb-jar"));
-        this.lmrbOutputDir.finalizeValueOnRead();
     }
 
     @Override
-    public Property<String> getMinecraftVersion() {
-        return this.minecraftVersion;
+    public Property<String> getMcVersion() {
+        return this.mcVersion;
     }
 
     @Override
