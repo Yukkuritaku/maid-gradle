@@ -3,7 +3,9 @@ package io.github.yukkuritaku.maidgradle.loom;
 import io.github.yukkuritaku.maidgradle.loom.api.MaidGradleExtensionAPI;
 import io.github.yukkuritaku.maidgradle.loom.configuration.MaidGradleConfigurations;
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtensionImpl;
+import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
 import io.github.yukkuritaku.maidgradle.loom.task.MaidGradleTasks;
+import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradlePlugin;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.bootstrap.LoomGradlePluginBootstrap;
@@ -26,6 +28,8 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
         if (pluginAware instanceof Project project){
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             project.getExtensions().create(MaidGradleExtensionAPI.class, "maidgradle", MaidGradleExtensionImpl.class, project);
+            SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
+            ((DownloadLittleMaidJarTask)project.getTasks().named("downloadLittleMaidJars")).downloadJars();
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
                         flatDirectoryArtifactRepository.dir(
                                 "build/" + MaidGradleExtension.get(project).getLMMLOutputDirectory().get().getAsFile().getName()
@@ -36,9 +40,10 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         );
                     }
             ));
-            project.afterEvaluate(p -> {
-                SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
-            });
+            project.getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION,
+                    MaidConstants.Dependencies.getLittleMaidModelLoader(project));
+            project.getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION,
+                    MaidConstants.Dependencies.getLittleMaidReBirth(project));
         }
     }
 }

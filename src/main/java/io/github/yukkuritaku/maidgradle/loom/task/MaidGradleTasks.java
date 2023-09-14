@@ -19,10 +19,9 @@ public abstract class MaidGradleTasks implements Runnable{
             task.dependsOn(getTasks().named("jar"));
             task.setDescription("Generate Zipped LittleMaid Model.");
         });
-        var downloadLittleMaidJars = getTasks().register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class, task -> {
+        getTasks().register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class, task -> {
             task.mustRunAfter(getTasks().named("downloadAssets"));
             task.setDescription("Download LittleMaid Jar from dropbox.");
         });
-        downloadLittleMaidJars.get().downloadJars();
     }
 }
