@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
 
-    public DownloadLittleMaidJarTask(MaidGradleExtension extension) {
+    public DownloadLittleMaidJarTask() {
         super();
     }
 
