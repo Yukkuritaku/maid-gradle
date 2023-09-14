@@ -17,7 +17,7 @@ import java.util.zip.ZipOutputStream;
 public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     @Input
-    public abstract SourceSet getZipSourceSetDir();
+    public abstract Property<SourceSet> getZipSourceSetDir();
 
     @Input
     public abstract Property<String> getOutputName();
@@ -28,6 +28,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
     @Inject
     public BuildLittleMaidModelTask() {
         super();
+        getZipSourceSetDir().convention(SourceSetHelper.getMainSourceSet(getProject()));
         getOutputName().convention("littleMaidMob-" + getProject().getName() + "-" + getProject().getVersion());
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
     }
@@ -82,7 +83,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     @TaskAction
     public void run() {
-        zip(getOutputName().get(), getZipSourceSetDir() == null ?
-                SourceSetHelper.getMainSourceSet(getProject()).getOutput() : getZipSourceSetDir().getOutput());
+        zip(getOutputName().get(), getZipSourceSetDir().get().getOutput());
     }
 }
