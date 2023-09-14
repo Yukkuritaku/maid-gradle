@@ -24,7 +24,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
     @Override
     public void apply(PluginAware pluginAware) {
         if (pluginAware instanceof Project project){
-            project.getLogger().info("Maid Gradle: {}", MAID_GRADLE_VERSION);
+            project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             project.getExtensions().create(MaidGradleExtensionAPI.class, "maidgradle", MaidGradleExtensionImpl.class, project);
             project.afterEvaluate(p -> {
                 SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());

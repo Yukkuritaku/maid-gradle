@@ -1,5 +1,6 @@
 package io.github.yukkuritaku.maidgradle.loom.configuration;
 
+import groovy.lang.Closure;
 import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.configuration.LoomConfigurations;
@@ -12,7 +13,7 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 import javax.inject.Inject;
 
-public abstract class MaidGradleConfigurations implements Runnable{
+public abstract class MaidGradleConfigurations implements Runnable {
 
     @Inject
     protected abstract Project getProject();
@@ -23,9 +24,6 @@ public abstract class MaidGradleConfigurations implements Runnable{
     @Inject
     protected abstract DependencyHandler getDependencies();
 
-    @Inject
-    protected abstract RepositoryHandler getRepositories();
-
     @Override
     public void run() {
         MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(getProject());
@@ -33,12 +31,17 @@ public abstract class MaidGradleConfigurations implements Runnable{
         register(MaidConstants.Configurations.LITTLE_MAID_REBIRTH, Role.RESOLVABLE);
         extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
         extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_REBIRTH);*/
-        getRepositories().flatDir(flatDirectoryArtifactRepository ->
-                flatDirectoryArtifactRepository.dirs(
-                        "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName(),
-                        "build/" + maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getName()
-                )
-                );
+        getProject().getRepositories().add(getProject().getRepositories().flatDir(flatDirectoryArtifactRepository -> {
+                    flatDirectoryArtifactRepository.dir(
+                            "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName()
+                    );
+
+                    flatDirectoryArtifactRepository.dir(
+                            "build/" + maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getName()
+                    );
+                }
+        ));
+
         /*getDependencies().add(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER,
                 MaidConstants.Dependencies.getLittleMaidModelLoader(getProject()));
         getDependencies().add(MaidConstants.Configurations.LITTLE_MAID_REBIRTH,

@@ -18,9 +18,9 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
     protected MaidGradleExtensionApiImpl(Project project){
         this.minecraftVersion = project.getObjects().property(String.class);
         this.littleMaidModelLoaderVersion = project.getObjects().property(String.class);
-        this.lmmlOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-zip"));
+        this.lmmlOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-jar"));
         this.littleMaidReBirthVersion = project.getObjects().property(String.class);
-        this.lmrbOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmrb-zip"));
+        this.lmrbOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmrb-jar"));
     }
 
     @Override
