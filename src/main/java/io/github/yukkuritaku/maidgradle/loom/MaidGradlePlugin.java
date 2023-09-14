@@ -1,6 +1,7 @@
 package io.github.yukkuritaku.maidgradle.loom;
 
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
+import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelTask;
 import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelZipTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
@@ -35,7 +36,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             final MaidGradleExtension maidGradleExtension = project.getExtensions().create("maidgradle", MaidGradleExtension.class, project);
             final TaskContainer tasks = project.getTasks();
             //Tasks
-            tasks.register("buildLittleMaidModelZip", BuildLittleMaidModelZipTask.class, task -> {
+            tasks.register("buildLittleMaidModel", BuildLittleMaidModelTask.class, task -> {
                 task.dependsOn(tasks.named("jar"));
                 task.setDescription("Generate Zipped LittleMaid Model.");
             });
