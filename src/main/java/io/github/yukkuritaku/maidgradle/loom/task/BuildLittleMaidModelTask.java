@@ -27,16 +27,22 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
     }
 
-    private void addDirRecursively(final ZipOutputStream zos, File file) throws IOException {
+    private String fileToRelativePath(File file, String baseDir) {
+        return file.getAbsolutePath()
+                .substring(baseDir.length() + 1);
+    }
+
+    private void addDirRecursively(String name, String baseDir, final ZipOutputStream zos, File file) throws IOException {
         File[] listedFiles = file.listFiles();
         if (listedFiles != null) {
             for (var listedFile : listedFiles) {
                 getProject().getLogger().lifecycle(listedFile.getAbsolutePath());
                 if (listedFile.isDirectory()) {
-                    addDirRecursively(zos, listedFile);
+                    addDirRecursively(name, baseDir, zos, listedFile);
                     continue;
                 }
-                ZipEntry zipEntry = new ZipEntry(listedFile.getName());
+                ZipEntry zipEntry = new ZipEntry(name + File.separatorChar +
+                        fileToRelativePath(file, baseDir));
                 var attr = Files.readAttributes(listedFile.toPath(), BasicFileAttributes.class);
                 zipEntry.setLastModifiedTime(attr.lastModifiedTime());
                 zipEntry.setCreationTime(attr.creationTime());
@@ -63,14 +69,14 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
             sourceSetOutput.getClassesDirs().getFiles().forEach(file -> {
                         try {
                             getProject().getLogger().lifecycle(file.getAbsolutePath());
-                            addDirRecursively(zos, file.getAbsoluteFile());
+                            addDirRecursively(file.getName(), file.getAbsolutePath(), zos, file);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     }
             );
             if (sourceSetOutput.getResourcesDir() != null) {
-                addDirRecursively(zos, sourceSetOutput.getResourcesDir());
+                addDirRecursively(sourceSetOutput.getResourcesDir().getName(), sourceSetOutput.getResourcesDir().getAbsolutePath(), zos, sourceSetOutput.getResourcesDir());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
