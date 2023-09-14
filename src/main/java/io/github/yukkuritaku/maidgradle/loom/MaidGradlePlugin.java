@@ -9,10 +9,14 @@ import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradlePlugin;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.bootstrap.LoomGradlePluginBootstrap;
+import net.fabricmc.loom.util.download.DownloadExecutor;
+import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
 import net.fabricmc.loom.util.gradle.GradleUtils;
+import net.fabricmc.loom.util.gradle.ProgressGroup;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +33,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
         if (pluginAware instanceof Project project) {
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             project.getExtensions().create(MaidGradleExtensionAPI.class, "maidgradle", MaidGradleExtensionImpl.class, project);
-
             MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(project);
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
                         flatDirectoryArtifactRepository.dir(
@@ -41,10 +44,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         );
                     }
             ));
-
-            project.beforeEvaluate(p -> {
-                SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
-            });
+            SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
 
 
         }

@@ -4,6 +4,7 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskContainer;
 
 import javax.inject.Inject;
+import java.io.IOException;
 
 public abstract class MaidGradleTasks implements Runnable{
 
@@ -19,8 +20,7 @@ public abstract class MaidGradleTasks implements Runnable{
             task.dependsOn(getTasks().named("jar"));
             task.setDescription("Generate Zipped LittleMaid Model.");
         });
-        getTasks().register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class, task -> {
-
+        var t = getTasks().register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class, task -> {
             task.setDescription("Download LittleMaid Jar from dropbox.");
         });
     }

@@ -1,6 +1,10 @@
 package io.github.yukkuritaku.maidgradle.loom.configuration;
 
 import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
+import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
+import net.fabricmc.loom.util.download.DownloadExecutor;
+import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
+import net.fabricmc.loom.util.gradle.ProgressGroup;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -8,6 +12,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 
 import javax.inject.Inject;
+import java.io.IOException;
 
 public abstract class MaidGradleConfigurations implements Runnable {
 
@@ -27,6 +32,28 @@ public abstract class MaidGradleConfigurations implements Runnable {
         register(MaidConstants.Configurations.LITTLE_MAID_REBIRTH, Role.RESOLVABLE);
         extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
         extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_REBIRTH);*/
+
+        getProject().getLogger().lifecycle("Download LittleMaid Dependencies...");
+        try (ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidModelLoader");
+             DownloadExecutor executor = new DownloadExecutor(2)
+        ) {
+            String versionInfo = maidGradleExtension.getMinecraftVersion().get();
+            maidGradleExtension
+                    .download(MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(versionInfo, maidGradleExtension))
+                    .progress(new GradleDownloadProgressListener("LittleMaidModelLoader", progressGroup::createProgressLogger))
+                    .downloadPathAsync(maidGradleExtension.getLMMLOutputDirectory().get().file(
+                            "LMML-" + versionInfo + "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() + "-Fabric.jar"
+                    ).getAsFile().toPath(), executor);
+            maidGradleExtension
+                    .download(MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(versionInfo, maidGradleExtension))
+                    .progress(new GradleDownloadProgressListener("LittleMaidReBirth", progressGroup::createProgressLogger))
+                    .downloadPathAsync(maidGradleExtension.getLMRBOutputDirectory().get().file(
+                            "LMRB-" + versionInfo + "-" + maidGradleExtension.getLittleMaidReBirthVersion().get() + "-Fabric.jar"
+                    ).getAsFile().toPath(), executor);
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        getProject().getLogger().lifecycle("Done!");
         getProject().getRepositories().add(getProject().getRepositories().flatDir(flatDirectoryArtifactRepository -> {
                     flatDirectoryArtifactRepository.dir(
                             "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName()
@@ -37,6 +64,7 @@ public abstract class MaidGradleConfigurations implements Runnable {
                     );
                 }
         ));
+
 
         /*getDependencies().add(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER,
                 MaidConstants.Dependencies.getLittleMaidModelLoader(getProject()));
