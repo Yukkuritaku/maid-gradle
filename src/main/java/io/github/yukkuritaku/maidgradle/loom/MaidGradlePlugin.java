@@ -31,23 +31,20 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             project.getExtensions().create(MaidGradleExtensionAPI.class, "maidgradle", MaidGradleExtensionImpl.class, project);
 
             MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(project);
+            project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
+                        flatDirectoryArtifactRepository.dir(
+                                "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName()
+                        );
+
+                        flatDirectoryArtifactRepository.dir(
+                                "build/" + maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getName()
+                        );
+                    }
+            ));
+
             project.beforeEvaluate(p -> {
                 SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
             });
-            project.afterEvaluate(p -> {
-                        project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
-                                    flatDirectoryArtifactRepository.dir(
-                                            "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName()
-                                    );
-
-                                    flatDirectoryArtifactRepository.dir(
-                                            "build/" + maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getName()
-                                    );
-                                }
-                        ));
-                        ((DownloadLittleMaidJarTask)project.getTasks().named("downloadLittleMaidJars").get()).downloadJars();
-                    }
-            );
 
 
         }

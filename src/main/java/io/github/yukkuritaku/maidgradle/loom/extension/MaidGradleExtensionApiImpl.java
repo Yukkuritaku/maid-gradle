@@ -13,7 +13,6 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
     protected final Property<String> littleMaidReBirthVersion;
     protected final DirectoryProperty lmrbOutputDir;
 
-
     protected MaidGradleExtensionApiImpl(Project project){
         this.minecraftVersion = project.getObjects().property(String.class);
         this.minecraftVersion.finalizeValueOnRead();
