@@ -35,8 +35,8 @@ public abstract class MaidGradleConfigurations implements Runnable{
         extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_REBIRTH);*/
         getRepositories().flatDir(flatDirectoryArtifactRepository ->
                 flatDirectoryArtifactRepository.dirs(
-                        maidGradleExtension.getLMMLOutputDirectory().get().getAsFile(),
-                        maidGradleExtension.getLMRBOutputDirectory().get().getAsFile()
+                        "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName(),
+                        "build/" + maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getName()
                 )
                 );
         /*getDependencies().add(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER,
