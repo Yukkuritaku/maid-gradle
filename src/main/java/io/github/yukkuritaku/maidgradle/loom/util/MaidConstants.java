@@ -93,7 +93,7 @@ public final class MaidConstants {
             final MaidGradleExtension maidGradleExtension = project.getExtensions().getByType(MaidGradleExtension.class);
             return LITTLE_MAID_REBIRTH +
                     "-" + maidGradleExtension.getMinecraftVersion().get() +
-                    "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
+                    "-" + maidGradleExtension.getLittleMaidReBirthVersion().get() +
                     "-Fabric";
         }
     }
