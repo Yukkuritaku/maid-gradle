@@ -29,20 +29,20 @@ public abstract class MaidGradleConfigurations implements Runnable{
     @Override
     public void run() {
         MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(getProject());
-        register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, Role.RESOLVABLE);
+        /*register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, Role.RESOLVABLE);
         register(MaidConstants.Configurations.LITTLE_MAID_REBIRTH, Role.RESOLVABLE);
         extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
-        extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
+        extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_REBIRTH);*/
         getRepositories().flatDir(flatDirectoryArtifactRepository ->
                 flatDirectoryArtifactRepository.dirs(
                         maidGradleExtension.getLMMLOutputDirectory().get().getAsFile(),
                         maidGradleExtension.getLMRBOutputDirectory().get().getAsFile()
                 )
                 );
-        getDependencies().add(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER,
+        /*getDependencies().add(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER,
                 MaidConstants.Dependencies.getLittleMaidModelLoader(getProject()));
         getDependencies().add(MaidConstants.Configurations.LITTLE_MAID_REBIRTH,
-                MaidConstants.Dependencies.getLittleMaidReBirth(getProject()));
+                MaidConstants.Dependencies.getLittleMaidReBirth(getProject()));*/
     }
 
     private NamedDomainObjectProvider<Configuration> register(String name, Role role) {
