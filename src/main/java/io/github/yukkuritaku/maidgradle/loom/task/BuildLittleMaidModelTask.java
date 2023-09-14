@@ -68,15 +68,40 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
             //zos.putNextEntry(new ZipEntry(sourceSetOutput.getClassesDirs().getAsPath()));
             sourceSetOutput.getClassesDirs().getFiles().forEach(file -> {
                         try {
-                            getProject().getLogger().lifecycle(file.getAbsolutePath());
-                            addDirRecursively(file.getName(), file.getAbsolutePath(), zos, file);
+                            File[] listedFiles = file.listFiles();
+                            if (listedFiles != null) {
+                                String appendPkgStr = null;
+                                for (var lf: listedFiles){
+                                    if (lf.isDirectory()){
+                                        appendPkgStr = lf.getName();
+                                        break;
+                                    }
+                                }
+                                getProject().getLogger().lifecycle(file.getAbsolutePath());
+                                addDirRecursively(file.getName(),
+                                        appendPkgStr != null ? file.getAbsolutePath() + File.separator + appendPkgStr : file.getAbsolutePath(),
+                                        zos, file);
+                            }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     }
             );
             if (sourceSetOutput.getResourcesDir() != null) {
-                addDirRecursively(sourceSetOutput.getResourcesDir().getName(), sourceSetOutput.getResourcesDir().getAbsolutePath(), zos, sourceSetOutput.getResourcesDir());
+                File[] listedFiles = sourceSetOutput.getResourcesDir().listFiles();
+                if (listedFiles != null) {
+                    String appendPkgStr = null;
+                    for (var lf: listedFiles){
+                        if (lf.isDirectory()){
+                            appendPkgStr = lf.getName();
+                            break;
+                        }
+                    }
+                    getProject().getLogger().lifecycle(sourceSetOutput.getResourcesDir().getAbsolutePath());
+                    addDirRecursively(sourceSetOutput.getResourcesDir().getName(),
+                            appendPkgStr != null ? sourceSetOutput.getResourcesDir().getAbsolutePath() + File.separator + appendPkgStr : sourceSetOutput.getResourcesDir().getAbsolutePath(),
+                            zos, sourceSetOutput.getResourcesDir());
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
