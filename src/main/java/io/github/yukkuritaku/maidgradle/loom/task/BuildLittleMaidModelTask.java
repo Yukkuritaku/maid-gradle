@@ -16,7 +16,7 @@ import java.util.zip.ZipOutputStream;
 
 public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
-    @InputDirectory
+    @Input
     public abstract Property<SourceSetOutput> getZipSourceSetDir();
 
     @Input
