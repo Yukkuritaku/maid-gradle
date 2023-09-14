@@ -23,7 +23,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
     @Inject
     public BuildLittleMaidModelTask() {
         super();
-        getOutputName().convention("littleMaidMob-" + getProject().getName() + "-" + getProject().getVersion());
+        getOutputName().convention("littleMaidMob-" + getProject().getName() + "-" + getProject().getVersion() + ".zip");
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
     }
 
