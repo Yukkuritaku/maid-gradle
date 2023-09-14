@@ -31,6 +31,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         File[] listedFiles = file.listFiles();
         if (listedFiles != null) {
             for (var listedFile : listedFiles) {
+                getProject().getLogger().lifecycle(listedFile.getAbsolutePath());
                 if (listedFile.isDirectory()) {
                     addDirRecursively(zos, file);
                     continue;
@@ -61,6 +62,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
             //zos.putNextEntry(new ZipEntry(sourceSetOutput.getClassesDirs().getAsPath()));
             sourceSetOutput.getClassesDirs().getFiles().forEach(file -> {
                         try {
+                            getProject().getLogger().lifecycle(file.getAbsolutePath());
                             addDirRecursively(zos, file.getAbsoluteFile());
                         } catch (IOException e) {
                             throw new RuntimeException(e);
