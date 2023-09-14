@@ -27,7 +27,6 @@ public abstract class MaidGradleConfigurations implements Runnable{
     @Override
     public void run() {
         MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(getProject());
-        LoomGradleExtension loomGradleExtension = LoomGradleExtension.get(getProject());
         //extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
         //extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
         getRepositories().flatDir(flatDirectoryArtifactRepository ->
@@ -37,9 +36,9 @@ public abstract class MaidGradleConfigurations implements Runnable{
                 )
                 );
         getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION,
-                MaidConstants.Dependencies.getLittleMaidModelLoader(getProject(), loomGradleExtension));
+                MaidConstants.Dependencies.getLittleMaidModelLoader(getProject()));
         getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION,
-                MaidConstants.Dependencies.getLittleMaidModelLoader(getProject(), loomGradleExtension));
+                MaidConstants.Dependencies.getLittleMaidReBirth(getProject()));
     }
 
 

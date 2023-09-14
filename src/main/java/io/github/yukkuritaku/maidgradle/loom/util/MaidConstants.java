@@ -81,20 +81,18 @@ public final class MaidConstants {
         public static final String LITTLE_MAID_MODEL_LOADER = LITTLE_MAID_JAR_PACKAGE_NAME + ":LMML";
         public static final String LITTLE_MAID_REBIRTH = LITTLE_MAID_JAR_PACKAGE_NAME + ":LMRB";
 
-        public static String getLittleMaidModelLoader(Project project, LoomGradleExtension loomGradleExtension){
+        public static String getLittleMaidModelLoader(Project project){
             MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(project);
-            MinecraftVersionMeta versionMeta = loomGradleExtension.getMinecraftProvider().getVersionInfo();
             return LITTLE_MAID_MODEL_LOADER +
-                    "-" + versionMeta.id() +
+                    "-" + maidGradleExtension.getMinecraftVersion() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
                     "-Fabric";
         }
 
-        public static String getLittleMaidReBirth(Project project, LoomGradleExtension loomGradleExtension){
+        public static String getLittleMaidReBirth(Project project){
             MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(project);
-            MinecraftVersionMeta versionMeta = loomGradleExtension.getMinecraftProvider().getVersionInfo();
             return LITTLE_MAID_REBIRTH +
-                    "-" + versionMeta.id() +
+                    "-" + maidGradleExtension.getMinecraftVersion() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
                     "-Fabric";
         }

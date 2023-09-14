@@ -10,6 +10,12 @@ import org.gradle.api.provider.Property;
 public interface MaidGradleExtensionAPI {
 
     /**
+     * Returns the value of Current Minecraft version.
+     * @return Current Minecraft version
+     */
+    Property<String> getMinecraftVersion();
+
+    /**
      * Returns the value of Current LittleMaidModelLoader version.
      * @return Current LittleMaidModelLoader version
      */
