@@ -1,6 +1,6 @@
 package io.github.yukkuritaku.maidgradle.loom.configuration;
 
-import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
+import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.util.download.DownloadExecutor;
 import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
@@ -27,7 +27,7 @@ public abstract class MaidGradleConfigurations implements Runnable {
 
     @Override
     public void run() {
-        MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(getProject());
+        final MaidGradleExtension maidGradleExtension = getProject().getExtensions().getByType(MaidGradleExtension.class);
         /*register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, Role.RESOLVABLE);
         register(MaidConstants.Configurations.LITTLE_MAID_REBIRTH, Role.RESOLVABLE);
         extendsFrom(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);

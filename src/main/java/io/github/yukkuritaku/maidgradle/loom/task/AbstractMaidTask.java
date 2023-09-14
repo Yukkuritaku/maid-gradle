@@ -1,8 +1,7 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
-import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
+import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
-import net.fabricmc.loom.LoomGradleExtension;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Internal;
 
@@ -13,6 +12,6 @@ public abstract class AbstractMaidTask extends DefaultTask {
     }
     @Internal
     protected MaidGradleExtension getMaidExtension() {
-        return MaidGradleExtension.get(getProject());
+        return getProject().getExtensions().getByType(MaidGradleExtension.class);
     }
 }

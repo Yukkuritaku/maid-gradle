@@ -1,7 +1,6 @@
 package io.github.yukkuritaku.maidgradle.loom.util;
 
-import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
-import io.github.yukkuritaku.maidgradle.loom.api.MaidGradleExtensionAPI;
+import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import org.gradle.api.Project;
 
 import javax.annotation.Nullable;
@@ -52,13 +51,13 @@ public final class MaidConstants {
         }
 
         @Nullable
-        public static String getLMMLDownloadUrl(String searchVersion, MaidGradleExtensionAPI extension){
+        public static String getLMMLDownloadUrl(String searchVersion, MaidGradleExtension extension){
             String lmml = LMML_DROPBOX_JAR_MAPPING.get(versionConvert(searchVersion)).get(extension.getLittleMaidModelLoaderVersion().get());
             return lmml != null ? lmml + "?dl=1" : null;
         }
 
         @Nullable
-        public static String getLMRBDownloadUrl(String searchVersion, MaidGradleExtensionAPI extension){
+        public static String getLMRBDownloadUrl(String searchVersion, MaidGradleExtension extension){
             String lmrb = LMRB_DROPBOX_JAR_MAPPING.get(versionConvert(searchVersion)).get(extension.getLittleMaidReBirthVersion().get());
             return lmrb != null ? lmrb + "?dl=1" : null;
         }
@@ -80,7 +79,7 @@ public final class MaidConstants {
         public static final String LITTLE_MAID_REBIRTH = LITTLE_MAID_JAR_PACKAGE_NAME + ":LMRB";
 
         public static String getLittleMaidModelLoader(Project project){
-            MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(project);
+            final MaidGradleExtension maidGradleExtension = project.getExtensions().getByType(MaidGradleExtension.class);
             return LITTLE_MAID_MODEL_LOADER +
                     "-" + maidGradleExtension.getMcVersion() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
@@ -88,7 +87,7 @@ public final class MaidConstants {
         }
 
         public static String getLittleMaidReBirth(Project project){
-            MaidGradleExtension maidGradleExtension = MaidGradleExtension.get(project);
+            final MaidGradleExtension maidGradleExtension = project.getExtensions().getByType(MaidGradleExtension.class);
             return LITTLE_MAID_REBIRTH +
                     "-" + maidGradleExtension.getMcVersion() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
