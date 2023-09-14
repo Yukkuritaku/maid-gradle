@@ -8,16 +8,11 @@ import org.gradle.api.tasks.*;
 import javax.inject.Inject;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
-
-    @Input
-    public abstract Property<SourceSet> getZipSourceSetDir();
 
     @Input
     public abstract Property<String> getOutputName();
@@ -28,7 +23,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
     @Inject
     public BuildLittleMaidModelTask() {
         super();
-        getZipSourceSetDir().convention(SourceSetHelper.getMainSourceSet(getProject()));
         getOutputName().convention("littleMaidMob-" + getProject().getName() + "-" + getProject().getVersion());
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
     }
@@ -83,6 +77,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     @TaskAction
     public void run() {
-        zip(getOutputName().get(), getZipSourceSetDir().get().getOutput());
+        zip(getOutputName().get(), SourceSetHelper.getMainSourceSet(getProject()).getOutput());
     }
 }
