@@ -36,7 +36,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                     addDirRecursively(zos, listedFile);
                     continue;
                 }
-                ZipEntry zipEntry = new ZipEntry(listedFile.getAbsolutePath());
+                ZipEntry zipEntry = new ZipEntry(listedFile.getName());
                 var attr = Files.readAttributes(listedFile.toPath(), BasicFileAttributes.class);
                 zipEntry.setLastModifiedTime(attr.lastModifiedTime());
                 zipEntry.setCreationTime(attr.creationTime());
