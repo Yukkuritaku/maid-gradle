@@ -17,7 +17,7 @@ import java.util.zip.ZipOutputStream;
 public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     @Input
-    public abstract Property<SourceSetOutput> getZipSourceSetDir();
+    public abstract Property<Object> getZipSourceSetDir();
 
     @Input
     public abstract Property<String> getOutputName();
@@ -85,6 +85,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     @TaskAction
     public void run() {
-        zip(getOutputName().get(), getZipSourceSetDir().get());
+        zip(getOutputName().get(), (SourceSetOutput) getZipSourceSetDir().get());
     }
 }
