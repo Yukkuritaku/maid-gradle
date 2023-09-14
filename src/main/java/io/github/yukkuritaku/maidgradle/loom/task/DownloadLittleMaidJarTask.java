@@ -1,9 +1,7 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
-import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.util.download.DownloadException;
 import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
 import net.fabricmc.loom.util.gradle.ProgressGroup;
 import org.gradle.api.tasks.TaskAction;
@@ -18,6 +16,7 @@ public class DownloadLittleMaidJarTask extends AbstractMaidTask{
 
     @TaskAction
     public void downloadJars(){
+        getProject().getLogger().lifecycle("Download LittleMaid Dependencies...");
         MinecraftVersionMeta versionInfo = getLoomExtension().getMinecraftProvider().getVersionInfo();
         try(ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidModelLoader")) {
             getLoomExtension()
@@ -34,7 +33,7 @@ public class DownloadLittleMaidJarTask extends AbstractMaidTask{
                     .download(MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(versionInfo.id(), getMaidExtension()))
                     .progress(new GradleDownloadProgressListener("LittleMaidReBirth", progressGroup::createProgressLogger))
                     .downloadPath(getMaidExtension().getLMRBOutputDirectory().get().file(
-                            "LMRB-" + versionInfo.id() + "-" + getMaidExtension().getLittleReBirthVersion().get() + "-Fabric.jar"
+                            "LMRB-" + versionInfo.id() + "-" + getMaidExtension().getLittleMaidReBirthVersion().get() + "-Fabric.jar"
                     ).getAsFile().toPath());
         }catch (IOException e){
             throw new RuntimeException(e);

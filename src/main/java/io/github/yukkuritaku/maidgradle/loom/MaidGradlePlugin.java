@@ -29,6 +29,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             project.getExtensions().create(MaidGradleExtensionAPI.class, "maidgradle", MaidGradleExtensionImpl.class, project);
             SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
+            project.getLogger().lifecycle("Adding repository with flatDir...");
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
                         flatDirectoryArtifactRepository.dir(
                                 "build/" + MaidGradleExtension.get(project).getLMMLOutputDirectory().get().getAsFile().getName()
@@ -39,10 +40,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         );
                     }
             ));
-            project.getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION,
-                    MaidConstants.Dependencies.getLittleMaidModelLoader(project));
-            project.getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION,
-                    MaidConstants.Dependencies.getLittleMaidReBirth(project));
+            project.getLogger().lifecycle("Done!");
         }
     }
 }

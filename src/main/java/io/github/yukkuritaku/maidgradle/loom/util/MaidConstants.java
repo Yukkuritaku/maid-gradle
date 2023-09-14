@@ -2,8 +2,6 @@ package io.github.yukkuritaku.maidgradle.loom.util;
 
 import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.api.MaidGradleExtensionAPI;
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
 import org.gradle.api.Project;
 
 import javax.annotation.Nullable;
@@ -61,7 +59,7 @@ public final class MaidConstants {
 
         @Nullable
         public static String getLMRBDownloadUrl(String searchVersion, MaidGradleExtensionAPI extension){
-            String lmrb = LMRB_DROPBOX_JAR_MAPPING.get(versionConvert(searchVersion)).get(extension.getLittleReBirthVersion().get());
+            String lmrb = LMRB_DROPBOX_JAR_MAPPING.get(versionConvert(searchVersion)).get(extension.getLittleMaidReBirthVersion().get());
             return lmrb != null ? lmrb + "?dl=1" : null;
         }
     }

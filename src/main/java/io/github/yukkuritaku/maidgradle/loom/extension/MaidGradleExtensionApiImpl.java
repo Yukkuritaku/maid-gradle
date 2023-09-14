@@ -39,7 +39,7 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
     }
 
     @Override
-    public Property<String> getLittleReBirthVersion() {
+    public Property<String> getLittleMaidReBirthVersion() {
         return this.littleMaidReBirthVersion;
     }
 

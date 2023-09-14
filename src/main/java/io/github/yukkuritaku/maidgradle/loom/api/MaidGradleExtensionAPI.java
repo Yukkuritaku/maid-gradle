@@ -1,6 +1,5 @@
 package io.github.yukkuritaku.maidgradle.loom.api;
 
-import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 
@@ -31,8 +30,7 @@ public interface MaidGradleExtensionAPI {
      * Returns the value of Current LittleMaidReBirth version.
      * @return Current LittleMaidReBirth version
      */
-    Property<String> getLittleReBirthVersion();
-
+    Property<String> getLittleMaidReBirthVersion();
 
     /**
      * Returns the value of Current LittleMaidReBirth output directory.
