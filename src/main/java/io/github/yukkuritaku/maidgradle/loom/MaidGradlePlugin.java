@@ -3,6 +3,7 @@ package io.github.yukkuritaku.maidgradle.loom;
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelZipTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
+import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.util.Checksum;
@@ -52,7 +53,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                     }
             ));
             afterEvaluationWithService(project, sharedServiceManager -> {
-                project.getLogger().info(":setting up littlemaid dependencies");
+                project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
                 final boolean previousRefreshDeps = extension.refreshDeps();
                 if (getAndLock(project)) {
@@ -64,6 +65,8 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                project.getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
+                project.getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Dependencies.getLittleMaidReBirth(project));
                 extension.getDependencyManager().handleDependencies(project, sharedServiceManager);
                 releaseLock(project);
                 extension.setRefreshDeps(previousRefreshDeps);
