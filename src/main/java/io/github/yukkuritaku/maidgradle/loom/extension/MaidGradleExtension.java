@@ -14,15 +14,19 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
 
     protected final Project project;
 
+    protected final Property<String> minecraftVersion;
+    protected final Property<String> littleMaidModelLoader;
+    protected final Property<String> littleMaidReBirthVersion;
+
     @Inject
     public MaidGradleExtension(final Project project){
         this.project = project;
+        this.minecraftVersion = project.getObjects().property(String.class);
+        this.littleMaidModelLoader = project.getObjects().property(String.class);
+        this.littleMaidReBirthVersion = project.getObjects().property(String.class);
+
         getLMMLOutputDirectory().convention(project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-jar")));
         getLMRBOutputDirectory().convention(project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmrb-jar")));
-    }
-
-    public Project getProject() {
-        return project;
     }
 
     private boolean manualRefreshDeps() {
@@ -50,12 +54,18 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      * @return Current Minecraft version
      */
     public abstract Property<String> getMinecraftVersion();
+    public void minecraftVersion(String minecraftVersion){
+        getMinecraftVersion().set(minecraftVersion);
+    }
 
     /**
      * Returns the value of Current LittleMaidModelLoader version.
      * @return Current LittleMaidModelLoader version
      */
     public abstract Property<String> getLittleMaidModelLoaderVersion();
+    public void littleMaidModelLoaderVersion(String littleMaidModelLoaderVersion){
+        getLittleMaidModelLoaderVersion().set(littleMaidModelLoaderVersion);
+    }
 
     /**
      * Returns the value of Current LittleMaidModelLoader output directory.
@@ -68,6 +78,10 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      * @return Current LittleMaidReBirth version
      */
     public abstract Property<String> getLittleMaidReBirthVersion();
+
+    public void littleMaidReBirthVersion(String littleMaidReBirthVersion){
+        getLittleMaidReBirthVersion().set(littleMaidReBirthVersion);
+    }
 
     /**
      * Returns the value of Current LittleMaidReBirth output directory.

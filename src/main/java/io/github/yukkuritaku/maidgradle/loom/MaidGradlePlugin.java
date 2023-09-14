@@ -34,11 +34,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 downloadLittleMaidJarTask.getLittleMaidModelLoaderVersion().set(maidGradleExtension.getLittleMaidModelLoaderVersion());
                 downloadLittleMaidJarTask.getLittleMaidReBirthVersion().set(maidGradleExtension.getLittleMaidReBirthVersion());
             });
-            try {
-                downloadLittleMaidJars.get().downloadJars();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
                         flatDirectoryArtifactRepository.dir(
                                 "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName()
