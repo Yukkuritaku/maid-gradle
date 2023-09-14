@@ -49,7 +49,7 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      * Returns the value of Current Minecraft version.
      * @return Current Minecraft version
      */
-    public abstract Property<String> getMcVersion();
+    public abstract Property<String> getMinecraftVersion();
 
     /**
      * Returns the value of Current LittleMaidModelLoader version.
@@ -59,7 +59,7 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
 
     /**
      * Returns the value of Current LittleMaidModelLoader output directory.
-     * @return Current LittleMaidModel output directory, default output directory is build/lmml-zip
+     * @return Current LittleMaidModel output directory, default output directory is build/lmml-jar
      */
     public abstract DirectoryProperty getLMMLOutputDirectory();
 
@@ -71,7 +71,7 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
 
     /**
      * Returns the value of Current LittleMaidReBirth output directory.
-     * @return Current LittleMaidReBirth output directory, default output directory is build/lmrb-zip
+     * @return Current LittleMaidReBirth output directory, default output directory is build/lmrb-jar
      */
     public abstract DirectoryProperty getLMRBOutputDirectory();
 

@@ -51,14 +51,14 @@ public final class MaidConstants {
         }
 
         @Nullable
-        public static String getLMMLDownloadUrl(String searchVersion, MaidGradleExtension extension){
-            String lmml = LMML_DROPBOX_JAR_MAPPING.get(versionConvert(searchVersion)).get(extension.getLittleMaidModelLoaderVersion().get());
+        public static String getLMMLDownloadUrl(String searchVersion, String lmmlVersion){
+            String lmml = LMML_DROPBOX_JAR_MAPPING.get(versionConvert(searchVersion)).get(lmmlVersion);
             return lmml != null ? lmml + "?dl=1" : null;
         }
 
         @Nullable
-        public static String getLMRBDownloadUrl(String searchVersion, MaidGradleExtension extension){
-            String lmrb = LMRB_DROPBOX_JAR_MAPPING.get(versionConvert(searchVersion)).get(extension.getLittleMaidReBirthVersion().get());
+        public static String getLMRBDownloadUrl(String searchVersion, String lmrbVersion){
+            String lmrb = LMRB_DROPBOX_JAR_MAPPING.get(versionConvert(searchVersion)).get(lmrbVersion);
             return lmrb != null ? lmrb + "?dl=1" : null;
         }
     }
@@ -81,7 +81,7 @@ public final class MaidConstants {
         public static String getLittleMaidModelLoader(Project project){
             final MaidGradleExtension maidGradleExtension = project.getExtensions().getByType(MaidGradleExtension.class);
             return LITTLE_MAID_MODEL_LOADER +
-                    "-" + maidGradleExtension.getMcVersion() +
+                    "-" + maidGradleExtension.getMinecraftVersion() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
                     "-Fabric";
         }
@@ -89,7 +89,7 @@ public final class MaidConstants {
         public static String getLittleMaidReBirth(Project project){
             final MaidGradleExtension maidGradleExtension = project.getExtensions().getByType(MaidGradleExtension.class);
             return LITTLE_MAID_REBIRTH +
-                    "-" + maidGradleExtension.getMcVersion() +
+                    "-" + maidGradleExtension.getMinecraftVersion() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
                     "-Fabric";
         }

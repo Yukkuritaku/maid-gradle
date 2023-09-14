@@ -1,18 +1,25 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
+import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.util.download.DownloadExecutor;
 import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
 import net.fabricmc.loom.util.gradle.ProgressGroup;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.IOException;
 
 public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
 
-    public DownloadLittleMaidJarTask() {
+    public DownloadLittleMaidJarTask(MaidGradleExtension extension) {
         super();
     }
+
+    @Input public abstract Property<String> getMinecraftVersion();
+    @Input public abstract Property<String> getLittleMaidModelLoaderVersion();
+    @Input public abstract Property<String> getLittleMaidReBirthVersion();
 
     @TaskAction
     public void downloadJars() throws IOException{
@@ -20,18 +27,18 @@ public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
         try (ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidModelLoader");
              DownloadExecutor executor = new DownloadExecutor(2)
         ) {
-            String versionInfo = getMaidExtension().getMcVersion().get();
+            String minecraftVersion = getMinecraftVersion().get();
             getMaidExtension()
-                    .download(MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(versionInfo, getMaidExtension()))
+                    .download(MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(minecraftVersion, getLittleMaidModelLoaderVersion().get()))
                     .progress(new GradleDownloadProgressListener("LittleMaidModelLoader", progressGroup::createProgressLogger))
                     .downloadPathAsync(getMaidExtension().getLMMLOutputDirectory().get().file(
-                            "LMML-" + versionInfo + "-" + getMaidExtension().getLittleMaidModelLoaderVersion().get() + "-Fabric.jar"
+                            "LMML-" + minecraftVersion + "-" + getMaidExtension().getLittleMaidModelLoaderVersion().get() + "-Fabric.jar"
                     ).getAsFile().toPath(), executor);
             getMaidExtension()
-                    .download(MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(versionInfo, getMaidExtension()))
+                    .download(MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(minecraftVersion, getLittleMaidReBirthVersion().get()))
                     .progress(new GradleDownloadProgressListener("LittleMaidReBirth", progressGroup::createProgressLogger))
                     .downloadPathAsync(getMaidExtension().getLMRBOutputDirectory().get().file(
-                            "LMRB-" + versionInfo + "-" + getMaidExtension().getLittleMaidReBirthVersion().get() + "-Fabric.jar"
+                            "LMRB-" + minecraftVersion + "-" + getMaidExtension().getLittleMaidReBirthVersion().get() + "-Fabric.jar"
                     ).getAsFile().toPath(), executor);
         }
         getProject().getLogger().lifecycle("Done!");
