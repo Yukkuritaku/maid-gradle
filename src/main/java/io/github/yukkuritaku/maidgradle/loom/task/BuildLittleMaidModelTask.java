@@ -33,7 +33,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
             for (var listedFile : listedFiles) {
                 getProject().getLogger().lifecycle(listedFile.getAbsolutePath());
                 if (listedFile.isDirectory()) {
-                    addDirRecursively(zos, file);
+                    addDirRecursively(zos, listedFile);
                     continue;
                 }
                 ZipEntry zipEntry = new ZipEntry(listedFile.getAbsolutePath());
