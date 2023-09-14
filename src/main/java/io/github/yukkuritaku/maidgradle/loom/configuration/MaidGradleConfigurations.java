@@ -1,15 +1,11 @@
 package io.github.yukkuritaku.maidgradle.loom.configuration;
 
-import groovy.lang.Closure;
 import io.github.yukkuritaku.maidgradle.loom.MaidGradleExtension;
-import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
-import net.fabricmc.loom.configuration.LoomConfigurations;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 import javax.inject.Inject;
 
