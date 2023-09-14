@@ -28,6 +28,9 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             var downloadLittleMaidJars = tasks.register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class, task -> {
                 task.setDescription("Download LittleMaid Jar from dropbox.");
             });
+            project.getLogger().lifecycle(maidGradleExtension.getMinecraftVersion().get());
+            project.getLogger().lifecycle(maidGradleExtension.getLittleMaidModelLoaderVersion().get());
+            project.getLogger().lifecycle(maidGradleExtension.getLittleMaidReBirthVersion().get());
             downloadLittleMaidJars.configure(downloadLittleMaidJarTask -> {
                 downloadLittleMaidJarTask.getMinecraftVersion().set(maidGradleExtension.getMinecraftVersion());
                 downloadLittleMaidJarTask.getLittleMaidModelLoaderVersion().set(maidGradleExtension.getLittleMaidModelLoaderVersion());
