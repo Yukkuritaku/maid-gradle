@@ -5,6 +5,7 @@ import io.github.yukkuritaku.maidgradle.loom.configuration.MaidGradleConfigurati
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtensionImpl;
 import io.github.yukkuritaku.maidgradle.loom.task.MaidGradleTasks;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
+import net.fabricmc.loom.bootstrap.LoomGradlePluginBootstrap;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 
@@ -20,6 +21,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
     @Override
     public void apply(PluginAware pluginAware) {
         if (pluginAware instanceof Project project){
+            project.getPlugins().apply(LoomGradlePluginBootstrap.class);
             if (project.getExtensions().findByName("loom") == null){
                 project.getLogger().error("This plugin is required to be put fabric-loom plugin below!");
             }
