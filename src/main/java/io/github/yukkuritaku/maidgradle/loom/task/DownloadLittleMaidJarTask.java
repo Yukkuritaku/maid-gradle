@@ -19,15 +19,23 @@ public class DownloadLittleMaidJarTask extends AbstractMaidTask{
     @TaskAction
     public void downloadJars(){
         MinecraftVersionMeta versionInfo = getLoomExtension().getMinecraftProvider().getVersionInfo();
-        try(ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaid Jars")) {
+        try(ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidModelLoader")) {
             getLoomExtension()
                     .download(MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(versionInfo.id(), getMaidExtension()))
                     .progress(new GradleDownloadProgressListener("LittleMaidModelLoader", progressGroup::createProgressLogger))
-                    .downloadPath(getMaidExtension().getLMMLOutputDirectory().get().getAsFile().toPath());
+                    .downloadPath(getMaidExtension().getLMMLOutputDirectory().get().file(
+                            "LMML-" + versionInfo.id() + "-" + getMaidExtension().getLittleMaidModelLoaderVersion().get() + "-Fabric.jar"
+                    ).getAsFile().toPath());
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        try(ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidReBirth")) {
             getLoomExtension()
                     .download(MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(versionInfo.id(), getMaidExtension()))
                     .progress(new GradleDownloadProgressListener("LittleMaidReBirth", progressGroup::createProgressLogger))
-                    .downloadPath(getMaidExtension().getLMMLOutputDirectory().get().getAsFile().toPath());
+                    .downloadPath(getMaidExtension().getLMRBOutputDirectory().get().file(
+                            "LMRB-" + versionInfo.id() + "-" + getMaidExtension().getLittleReBirthVersion().get() + "-Fabric.jar"
+                    ).getAsFile().toPath());
         }catch (IOException e){
             throw new RuntimeException(e);
         }
