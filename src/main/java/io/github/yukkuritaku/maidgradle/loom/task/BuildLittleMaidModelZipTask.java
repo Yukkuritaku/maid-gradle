@@ -15,8 +15,6 @@ public abstract class BuildLittleMaidModelZipTask extends Zip {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BuildLittleMaidModelZipTask.class);
 
-
-
     @OutputDirectory
     public abstract RegularFileProperty getLittleMaidModelOutputDir();
 
@@ -29,7 +27,7 @@ public abstract class BuildLittleMaidModelZipTask extends Zip {
     public BuildLittleMaidModelZipTask() {
         super();
         setGroup(MaidConstants.MAID_GRADLE);
-        File littleMaidBuildDir = new File(getProject().getLayout().getBuildDirectory().get().getAsFile(), "littlemaidmodel-zip");
+        File littleMaidBuildDir = new File(getProject().getLayout().getBuildDirectory().get().getAsFile(), "littlemaidmodel-output");
         getLittleMaidModelOutputDir().set(littleMaidBuildDir);
         LOGGER.info("LittleMaidModel Output dir: {}", littleMaidBuildDir);
     }

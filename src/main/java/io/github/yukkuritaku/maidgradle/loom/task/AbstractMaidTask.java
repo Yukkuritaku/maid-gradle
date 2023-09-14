@@ -11,12 +11,6 @@ public abstract class AbstractMaidTask extends DefaultTask {
     public AbstractMaidTask(){
         setGroup(MaidConstants.MAID_GRADLE);
     }
-
-    @Internal
-    protected LoomGradleExtension getLoomExtension() {
-        return LoomGradleExtension.get(getProject());
-    }
-
     @Internal
     protected MaidGradleExtension getMaidExtension() {
         return MaidGradleExtension.get(getProject());
