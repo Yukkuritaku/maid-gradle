@@ -15,6 +15,7 @@ public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
 
     public DownloadLittleMaidJarTask() {
         super();
+        setGroup(MaidConstants.MAID_GRADLE);
     }
 
     @Input public abstract Property<String> getMinecraftVersion();

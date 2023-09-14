@@ -18,7 +18,7 @@ public abstract class BuildLittleMaidModelZipTask extends Zip {
     @OutputDirectory
     public abstract RegularFileProperty getLittleMaidModelOutputDir();
 
-    @Input
+    @InputDirectory
     public SourceSetOutput getSourceSetOutputDir(){
         return SourceSetHelper.getMainSourceSet(getProject()).getOutput();
     }
@@ -38,7 +38,7 @@ public abstract class BuildLittleMaidModelZipTask extends Zip {
         getArchiveBaseName().set("littleMaidMob-" + baseName + "-" + getArchiveVersion().get());
         from(getSourceSetOutputDir());
         String[] outputDir = getSourceSetOutputDir().getClassesDirs().getAsPath().split("[/\\\\]");
-        LOGGER.info("Project sourceSet: {}(custom)", outputDir[outputDir.length - 1]);
+        LOGGER.info("Project sourceSet: {}", outputDir[outputDir.length - 1]);
     }
 
 

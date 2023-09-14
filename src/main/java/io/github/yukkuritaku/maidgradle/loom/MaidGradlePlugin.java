@@ -20,7 +20,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
         if (pluginAware instanceof Project project) {
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             final MaidGradleExtension maidGradleExtension = project.getExtensions().create("maidgradle", MaidGradleExtension.class, project);
-
             final TaskContainer tasks = project.getTasks();
             tasks.register("buildLittleMaidModelZip", BuildLittleMaidModelZipTask.class, task -> {
                 task.dependsOn(tasks.named("jar"));
@@ -43,8 +42,11 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         );
                     }
             ));
-
-
+            try {
+                downloadLittleMaidJars.get().downloadJars();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
