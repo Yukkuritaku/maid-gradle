@@ -9,7 +9,6 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
 
     protected final Property<String> minecraftVersion;
     protected final Property<String> littleMaidModelLoaderVersion;
-
     protected final DirectoryProperty lmmlOutputDir;
     protected final Property<String> littleMaidReBirthVersion;
     protected final DirectoryProperty lmrbOutputDir;
@@ -25,7 +24,7 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
 
     @Override
     public Property<String> getMinecraftVersion() {
-        return minecraftVersion;
+        return this.minecraftVersion;
     }
 
     @Override
@@ -35,7 +34,7 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
 
     @Override
     public DirectoryProperty getLMMLOutputDirectory() {
-        return lmmlOutputDir;
+        return this.lmmlOutputDir;
     }
 
     @Override
@@ -45,6 +44,6 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
 
     @Override
     public DirectoryProperty getLMRBOutputDirectory() {
-        return lmrbOutputDir;
+        return this.lmrbOutputDir;
     }
 }
