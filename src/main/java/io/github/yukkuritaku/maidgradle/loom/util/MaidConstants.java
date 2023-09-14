@@ -69,6 +69,9 @@ public final class MaidConstants {
 
         public static final String LITTLE_MAID_MODEL_LOADER = "littleMaidModelLoader";
         public static final String LITTLE_MAID_REBIRTH = "littleMaidReBirth";
+
+        public static final String MOD_LITTLE_MAID_MODEL_LOADER = "modLittleMaidModelLoader";
+        public static final String MOD_LITTLE_MAID_REBIRTH = "modLittleMaidReBirth";
     }
 
     public static class Dependencies{

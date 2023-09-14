@@ -5,12 +5,17 @@ import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelZipTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
+import net.fabricmc.loom.configuration.LoomDependencyManager;
+import net.fabricmc.loom.configuration.RemapConfigurations;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.gradle.GradleUtils;
+import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import net.fabricmc.loom.util.service.ScopedSharedServiceManager;
 import net.fabricmc.loom.util.service.SharedServiceManager;
 import org.gradle.api.Project;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
 
@@ -55,6 +60,25 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             afterEvaluationWithService(project, sharedServiceManager -> {
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
+
+                extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
+                extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
+                extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, remapConfigurationSettings -> {
+                    remapConfigurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(project));
+                    remapConfigurationSettings.getTargetConfigurationName().convention(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
+                    remapConfigurationSettings.getOnCompileClasspath().convention(true);
+                    remapConfigurationSettings.getOnRuntimeClasspath().convention(true);
+                    remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY);
+                });
+                extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, remapConfigurationSettings -> {
+                    remapConfigurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(project));
+                    remapConfigurationSettings.getTargetConfigurationName().convention(MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
+                    remapConfigurationSettings.getOnCompileClasspath().convention(true);
+                    remapConfigurationSettings.getOnRuntimeClasspath().convention(true);
+                    remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY);
+                });
+                extension.createRemapConfigurations(SourceSetHelper.getMainSourceSet(project));
+
                 final boolean previousRefreshDeps = extension.refreshDeps();
                 if (getAndLock(project)) {
                     project.getLogger().lifecycle("Found existing cache lock file, rebuilding loom cache. This may have been caused by a failed or canceled build.");
@@ -65,14 +89,22 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                project.getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
-                project.getDependencies().add(MaidConstants.Configurations.FABRIC_MOD_IMPLEMENTATION, MaidConstants.Dependencies.getLittleMaidReBirth(project));
-                extension.getDependencyManager().handleDependencies(project, sharedServiceManager);
+                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
+                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidReBirth(project));
+
+                LoomDependencyManager dependencyManager = new LoomDependencyManager();
+                extension.setDependencyManager(dependencyManager);
+                dependencyManager.handleDependencies(project, sharedServiceManager);
                 releaseLock(project);
                 extension.setRefreshDeps(previousRefreshDeps);
             });
         }
     }
+
+    public void extendsFrom(Project project, String a, String b) {
+        project.getConfigurations().getByName(a, configuration -> configuration.extendsFrom(project.getConfigurations().getByName(b)));
+    }
+
     private Path getLockFile(Project project) {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
         final Path cacheDirectory = extension.getFiles().getUserCache().toPath();
