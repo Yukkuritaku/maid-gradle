@@ -60,7 +60,14 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             afterEvaluationWithService(project, sharedServiceManager -> {
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
-
+                project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, c -> {
+                    c.setCanBeConsumed(false);
+                    c.setCanBeResolved(true);
+                });
+                project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_REBIRTH, c -> {
+                    c.setCanBeConsumed(false);
+                    c.setCanBeResolved(true);
+                });
                 extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
                 extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
                 extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, remapConfigurationSettings -> {
