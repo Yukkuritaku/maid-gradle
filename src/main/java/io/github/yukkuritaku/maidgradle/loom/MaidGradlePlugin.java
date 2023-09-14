@@ -8,14 +8,12 @@ import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.configuration.LoomDependencyManager;
-import net.fabricmc.loom.configuration.RemapConfigurations;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.gradle.GradleUtils;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import net.fabricmc.loom.util.service.ScopedSharedServiceManager;
 import net.fabricmc.loom.util.service.SharedServiceManager;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
 
@@ -84,7 +82,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                     remapConfigurationSettings.getOnRuntimeClasspath().convention(true);
                     remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY);
                 });
-                extension.createRemapConfigurations(SourceSetHelper.getMainSourceSet(project));
 
                 final boolean previousRefreshDeps = extension.refreshDeps();
                 if (getAndLock(project)) {
