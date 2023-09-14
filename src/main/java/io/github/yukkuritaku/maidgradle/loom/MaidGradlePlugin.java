@@ -26,6 +26,16 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
         if (pluginAware instanceof Project project){
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             project.getExtensions().create(MaidGradleExtensionAPI.class, "maidgradle", MaidGradleExtensionImpl.class, project);
+            project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
+                        flatDirectoryArtifactRepository.dir(
+                                "build/" + MaidGradleExtension.get(project).getLMMLOutputDirectory().get().getAsFile().getName()
+                        );
+
+                        flatDirectoryArtifactRepository.dir(
+                                "build/" + MaidGradleExtension.get(project).getLMRBOutputDirectory().get().getAsFile().getName()
+                        );
+                    }
+            ));
             project.afterEvaluate(p -> {
                 SETUP_JOBS.forEach(clazz -> project.getObjects().newInstance(clazz).run());
             });
