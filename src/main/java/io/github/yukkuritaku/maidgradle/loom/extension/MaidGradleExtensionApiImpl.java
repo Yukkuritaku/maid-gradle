@@ -16,10 +16,15 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
 
     protected MaidGradleExtensionApiImpl(Project project){
         this.minecraftVersion = project.getObjects().property(String.class);
+        this.minecraftVersion.finalizeValueOnRead();
         this.littleMaidModelLoaderVersion = project.getObjects().property(String.class);
+        this.littleMaidModelLoaderVersion.finalizeValueOnRead();
         this.lmmlOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-jar"));
+        this.lmmlOutputDir.finalizeValueOnRead();
         this.littleMaidReBirthVersion = project.getObjects().property(String.class);
+        this.littleMaidReBirthVersion.finalizeValueOnRead();
         this.lmrbOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmrb-jar"));
+        this.lmrbOutputDir.finalizeValueOnRead();
     }
 
     @Override
