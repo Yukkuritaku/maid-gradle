@@ -37,6 +37,7 @@ public abstract class BuildLittleMaidModelZipTask extends Zip {
         String baseName = getArchiveBaseName().get();
         getArchiveBaseName().set("littleMaidMob-" + baseName + "-" + getArchiveVersion().get());
         from(getSourceSetOutputDir());
+        into(getLittleMaidModelOutputDir());
         String[] outputDir = getSourceSetOutputDir().getClassesDirs().getAsPath().split("[/\\\\]");
         LOGGER.info("Project sourceSet: {}", outputDir[outputDir.length - 1]);
     }

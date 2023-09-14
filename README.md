@@ -2,4 +2,5 @@
 ---
 Still Wip!
 
-Currently, implemented task is zip build only.
+Currently, implemented task is zip building and download jar.
+

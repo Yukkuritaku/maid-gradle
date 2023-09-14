@@ -34,6 +34,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             final MaidGradleExtension maidGradleExtension = project.getExtensions().create("maidgradle", MaidGradleExtension.class, project);
             final TaskContainer tasks = project.getTasks();
+            //Tasks
             tasks.register("buildLittleMaidModelZip", BuildLittleMaidModelZipTask.class, task -> {
                 task.dependsOn(tasks.named("jar"));
                 task.setDescription("Generate Zipped LittleMaid Model.");
@@ -46,6 +47,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 downloadLittleMaidJarTask.getLittleMaidModelLoaderVersion().set(maidGradleExtension.getLittleMaidModelLoaderVersion());
                 downloadLittleMaidJarTask.getLittleMaidReBirthVersion().set(maidGradleExtension.getLittleMaidReBirthVersion());
             });
+            //Add LittleMaid libraries directory
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
                         flatDirectoryArtifactRepository.dir(
                                 "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName()
@@ -58,6 +60,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             afterEvaluationWithService(project, sharedServiceManager -> {
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
+                //Register configurations
                 project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, c -> {
                     c.setCanBeConsumed(false);
                     c.setCanBeResolved(true);

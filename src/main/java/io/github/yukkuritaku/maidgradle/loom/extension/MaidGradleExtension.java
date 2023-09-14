@@ -54,6 +54,11 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      * @return Current Minecraft version
      */
     public abstract Property<String> getMinecraftVersion();
+
+    /**
+     * Set the value of minecraftVersion.
+     * @param minecraftVersion your current minecraft version
+     */
     public void minecraftVersion(String minecraftVersion){
         getMinecraftVersion().set(minecraftVersion);
     }
@@ -63,6 +68,11 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      * @return Current LittleMaidModelLoader version
      */
     public abstract Property<String> getLittleMaidModelLoaderVersion();
+
+    /**
+     * Set the value of LittleMaidModelLoader.
+     * @param littleMaidModelLoaderVersion LittleMaidModelLoader version
+     */
     public void littleMaidModelLoaderVersion(String littleMaidModelLoaderVersion){
         getLittleMaidModelLoaderVersion().set(littleMaidModelLoaderVersion);
     }
@@ -79,6 +89,10 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      */
     public abstract Property<String> getLittleMaidReBirthVersion();
 
+    /**
+     * Set the value of LittleMaidReBirthVersion.
+     * @param littleMaidReBirthVersion LittleMaidReBirthVersion version
+     */
     public void littleMaidReBirthVersion(String littleMaidReBirthVersion){
         getLittleMaidReBirthVersion().set(littleMaidReBirthVersion);
     }
