@@ -16,7 +16,7 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
     protected final DirectoryProperty lmrbOutputDir;
 
     @Inject
-    protected MaidGradleExtensionApiImpl(Project project){
+    public MaidGradleExtensionApiImpl(Project project){
         this.mcVersion = project.getObjects().property(String.class);
         this.littleMaidModelLoaderVersion = project.getObjects().property(String.class);
         this.lmmlOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-jar"));
