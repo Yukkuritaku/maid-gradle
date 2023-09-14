@@ -42,11 +42,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         );
                     }
             ));
-            try {
-                downloadLittleMaidJars.get().downloadJars();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 }
