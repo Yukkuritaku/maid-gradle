@@ -5,6 +5,8 @@ import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 
+import javax.inject.Inject;
+
 public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionAPI {
 
     protected final Property<String> mcVersion;
@@ -13,11 +15,12 @@ public abstract class MaidGradleExtensionApiImpl implements MaidGradleExtensionA
     protected final Property<String> littleMaidReBirthVersion;
     protected final DirectoryProperty lmrbOutputDir;
 
+    @Inject
     protected MaidGradleExtensionApiImpl(Project project){
-        this.mcVersion = project.getObjects().property(String.class).convention("");
-        this.littleMaidModelLoaderVersion = project.getObjects().property(String.class).convention("");
+        this.mcVersion = project.getObjects().property(String.class);
+        this.littleMaidModelLoaderVersion = project.getObjects().property(String.class);
         this.lmmlOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-jar"));
-        this.littleMaidReBirthVersion = project.getObjects().property(String.class).convention("");
+        this.littleMaidReBirthVersion = project.getObjects().property(String.class);
         this.lmrbOutputDir = project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmrb-jar"));
     }
 
