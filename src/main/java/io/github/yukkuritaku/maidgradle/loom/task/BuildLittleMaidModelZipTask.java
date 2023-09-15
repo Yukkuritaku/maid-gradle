@@ -17,18 +17,12 @@ public abstract class BuildLittleMaidModelZipTask extends Zip {
 
     @OutputDirectory
     public abstract RegularFileProperty getLittleMaidModelOutputDir();
-
-    @InputDirectory
-    public SourceSetOutput getSourceSetOutputDir(){
-        return SourceSetHelper.getMainSourceSet(getProject()).getOutput();
-    }
-
     @Inject
     public BuildLittleMaidModelZipTask() {
         super();
         setGroup(MaidConstants.MAID_GRADLE);
         File littleMaidBuildDir = new File(getProject().getLayout().getBuildDirectory().get().getAsFile(), "littlemaidmodel-output");
-        getLittleMaidModelOutputDir().set(littleMaidBuildDir);
+        getLittleMaidModelOutputDir().convention(getProject().getObjects().fileProperty().fileValue(littleMaidBuildDir));
         LOGGER.info("LittleMaidModel Output dir: {}", littleMaidBuildDir);
     }
 
@@ -36,9 +30,9 @@ public abstract class BuildLittleMaidModelZipTask extends Zip {
     public void run() {
         String baseName = getArchiveBaseName().get();
         getArchiveBaseName().set("littleMaidMob-" + baseName + "-" + getArchiveVersion().get());
-        from(getSourceSetOutputDir());
+        from(SourceSetHelper.getMainSourceSet(getProject()).getOutput());
         into(getLittleMaidModelOutputDir());
-        String[] outputDir = getSourceSetOutputDir().getClassesDirs().getAsPath().split("[/\\\\]");
+        String[] outputDir = SourceSetHelper.getMainSourceSet(getProject()).getOutput().getClassesDirs().getAsPath().split("[/\\\\]");
         LOGGER.info("Project sourceSet: {}", outputDir[outputDir.length - 1]);
     }
 
