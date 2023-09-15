@@ -61,14 +61,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
             //読み込めない原因を探るのに丸1日使った、ニッチ過ぎるバグやでこれ
             entry.setMethod(ZipOutputStream.STORED);
             entry.setCrc(getCrc32(file));
-            try(FileInputStream fis = new FileInputStream(file)) {
-                byte[] b = new byte[1024];
-                int len = fis.read(b);
-                while (len != -1){
-                    len = fis.read(b);
-                }
-                entry.setSize(len);
-            }
+            entry.setSize(Files.size(file.toPath()));
         }
     }
 
