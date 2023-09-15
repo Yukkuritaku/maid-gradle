@@ -4,6 +4,7 @@ import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.internal.impldep.org.apache.commons.compress.archivers.zip.X000A_NTFS;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -53,7 +54,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
     }
 
     private void setZipCompression(File file, ZipEntry entry) throws IOException {
-        if (file.getName().endsWith(".class")){
+        /*if (file.getName().endsWith(".class")){
             entry.setMethod(ZipOutputStream.DEFLATED);
         }else if (file.getName().endsWith(".png")){
             //pngの時にSTOREに設定する、これをしないとメイドさんの画像を読み込めない
@@ -62,7 +63,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
             entry.setMethod(ZipOutputStream.STORED);
             entry.setCrc(getCrc32(file));
             entry.setSize(Files.size(file.toPath()));
-        }
+        }*/
     }
 
     private static long getCrc32(File file) throws IOException {
@@ -123,7 +124,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         try (ZipOutputStream zos = new ZipOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(getOutputDir().file(outputName).get().getAsFile())))) {
-            zos.setLevel(Deflater.NO_COMPRESSION);
+            zos.setLevel(5);
             sourceSetOutput.getFiles().forEach(file -> {
                         if (file.exists()) {
                             if (file.isDirectory()) {
