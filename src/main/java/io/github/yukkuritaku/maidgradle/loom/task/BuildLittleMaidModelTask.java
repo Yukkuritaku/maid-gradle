@@ -97,7 +97,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipEntry(pathName.toString());
-                        setZipCompression(p.toFile().getName(), zipEntry, getCrc32(p.toFile()));
+                        //setZipCompression(p.toFile().getName(), zipEntry, getCrc32(p.toFile()));
                         var attr = Files.readAttributes(p, BasicFileAttributes.class);
 
                         zipEntry.setLastModifiedTime(attr.lastModifiedTime());
@@ -124,6 +124,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         try (ZipOutputStream zos = new ZipOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(getOutputDir().file(outputName).get().getAsFile())))) {
+            zos.setMethod(ZipOutputStream.STORED);
             zos.setLevel(Deflater.NO_COMPRESSION);
             sourceSetOutput.getFiles().forEach(file -> {
                         if (file.exists()) {
@@ -136,7 +137,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                             } else {
                                 try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
                                     var zipEntry = new ZipEntry(file.toPath().getFileName().toString());
-                                    setZipCompression(file.getName(), zipEntry, getCrc32(file));
+                                    //setZipCompression(file.getName(), zipEntry, getCrc32(file));
 
                                     var attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                                     zipEntry.setLastModifiedTime(attr.lastModifiedTime());
