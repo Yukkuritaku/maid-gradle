@@ -97,7 +97,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipEntry(pathName.toString());
-                        setZipCompression(p.toFile().getName(), zipEntry, getCrc32(pathName.toFile()));
+                        setZipCompression(p.toFile().getName(), zipEntry, getCrc32(p.toFile()));
                         var attr = Files.readAttributes(p, BasicFileAttributes.class);
 
                         zipEntry.setLastModifiedTime(attr.lastModifiedTime());
