@@ -31,9 +31,10 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     /**
      * Taken from <a href="https://qiita.com/ry-s/items/961e295b74edb39768d0">ry-s(R S)'s qiita blog</a>
+     *
      * @param rootCount Name count
-     * @param path filePath
-     * @param zos ZipOutputStream
+     * @param path      filePath
+     * @param zos       ZipOutputStream
      * @throws IOException if an I/O error occurs when opening the directory and zipping files
      */
     private void zipDirectory(int rootCount, Path path, ZipOutputStream zos) throws IOException {
@@ -42,7 +43,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                 try {
                     var pathName = p.subpath(rootCount, p.getNameCount());
                     if (Files.isDirectory(p)) {
-                        zos.putNextEntry(new ZipEntry(pathName + File.separator));
+                        zos.putNextEntry(new ZipEntry(pathName + "/"));
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipEntry(pathName.toString());
@@ -72,29 +73,34 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                 new BufferedOutputStream(
                         new FileOutputStream(getOutputDir().file(outputName).get().getAsFile())))) {
             sourceSetOutput.getFiles().forEach(file -> {
-                        if (file.exists()) {
-                            if (file.isDirectory()) {
-                                try {
-                                    zipDirectory(file.toPath().getNameCount(), file.toPath(), zos);
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            } else {
-                                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-                                    var zipEntry = new ZipEntry(file.toPath().getFileName().toString());
-                                    var attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-                                    zipEntry.setLastModifiedTime(attr.lastModifiedTime());
-                                    zipEntry.setCreationTime(attr.creationTime());
-                                    zipEntry.setLastAccessTime(attr.lastAccessTime());
-                                    zipEntry.setTime(attr.lastModifiedTime().toMillis());
-                                    zos.putNextEntry(zipEntry);
-                                    byte[] b = new byte[1024];
-                                    int count;
-                                    while ((count = bis.read(b)) > 0) {
-                                        zos.write(b, 0, count);
+                        File[] lf = file.listFiles();
+                        if (lf != null) {
+                            for (File f : lf) {
+                                if (f.exists()) {
+                                    if (f.isDirectory()) {
+                                        try {
+                                            zipDirectory(f.toPath().getNameCount(), f.toPath(), zos);
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    } else {
+                                        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f))) {
+                                            var zipEntry = new ZipEntry(f.toPath().getFileName().toString());
+                                            var attr = Files.readAttributes(f.toPath(), BasicFileAttributes.class);
+                                            zipEntry.setLastModifiedTime(attr.lastModifiedTime());
+                                            zipEntry.setCreationTime(attr.creationTime());
+                                            zipEntry.setLastAccessTime(attr.lastAccessTime());
+                                            zipEntry.setTime(attr.lastModifiedTime().toMillis());
+                                            zos.putNextEntry(zipEntry);
+                                            byte[] b = new byte[1024];
+                                            int count;
+                                            while ((count = bis.read(b)) > 0) {
+                                                zos.write(b, 0, count);
+                                            }
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
                                     }
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
                                 }
                             }
                         }

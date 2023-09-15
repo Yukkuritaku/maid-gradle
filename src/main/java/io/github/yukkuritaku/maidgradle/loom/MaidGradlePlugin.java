@@ -36,7 +36,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             final MaidGradleExtension maidGradleExtension = project.getExtensions().create("maidgradle", MaidGradleExtension.class, project);
             final TaskContainer tasks = project.getTasks();
             //Tasks
-            tasks.register("buildLittleMaidModel", BuildLittleMaidModelZipTask.class, task -> {
+            tasks.register("buildLittleMaidModel", BuildLittleMaidModelTask.class, task -> {
                 task.dependsOn(tasks.named("jar"));
                 task.setDescription("Generate Zipped LittleMaid Model.");
             });
