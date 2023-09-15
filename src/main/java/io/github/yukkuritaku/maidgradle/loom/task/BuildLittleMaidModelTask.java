@@ -67,7 +67,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         new FileOutputStream(getOutputDir().file(outputName).get().getAsFile())))) {
             //zos.putNextEntry(new ZipEntry(sourceSetOutput.getClassesDirs().getAsPath()));
             sourceSetOutput.getClassesDirs().getFiles().forEach(file -> {
-                        try {
+                        /*try {
                             File[] listedFiles = file.listFiles();
                             if (listedFiles != null) {
                                 String appendPkgStr = null;
@@ -84,23 +84,45 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
+                        }*/
+                        boolean isDir = file.isDirectory();
+                        ZipEntry zipEntry = new ZipEntry(isDir ? file.getName() + File.separator : file.getName());
+                        try {
+                            zos.putNextEntry(zipEntry);
+                            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+                                byte[] b = new byte[1024];
+                                int count;
+                                while ((count = bis.read(b)) > 0) {
+                                    zos.write(b, 0, count);
+                                }
+                                zos.closeEntry();
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
                     }
             );
             if (sourceSetOutput.getResourcesDir() != null) {
                 File[] listedFiles = sourceSetOutput.getResourcesDir().listFiles();
                 if (listedFiles != null) {
-                    String appendPkgStr = null;
-                    for (var lf: listedFiles){
-                        if (lf.isDirectory()){
-                            appendPkgStr = lf.getName();
-                            break;
+                    for (var lf : listedFiles) {
+                        boolean isDir = lf.isDirectory();
+                        ZipEntry zipEntry = new ZipEntry(isDir ? lf.getName() + File.separator : lf.getName());
+                        try {
+                            zos.putNextEntry(zipEntry);
+                            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(lf))) {
+                                byte[] b = new byte[1024];
+                                int count;
+                                while ((count = bis.read(b)) > 0) {
+                                    zos.write(b, 0, count);
+                                }
+                                zos.closeEntry();
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                     getProject().getLogger().lifecycle(sourceSetOutput.getResourcesDir().getAbsolutePath());
-                    addDirRecursively(sourceSetOutput.getResourcesDir().getName(),
-                            appendPkgStr != null ? sourceSetOutput.getResourcesDir().getAbsolutePath() + File.separator + appendPkgStr : sourceSetOutput.getResourcesDir().getAbsolutePath(),
-                            zos, sourceSetOutput.getResourcesDir());
                 }
             }
         } catch (IOException e) {
