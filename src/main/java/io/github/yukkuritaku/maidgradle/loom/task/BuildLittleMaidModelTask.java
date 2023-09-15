@@ -92,7 +92,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                     var pathName = p.subpath(rootCount, p.getNameCount());
                     if (Files.isDirectory(p)) {
                         ZipEntry entry = new ZipEntry(pathName + "/");
-                        entry.setMethod(ZipOutputStream.STORED);
                         zos.putNextEntry(entry);
                         zipDirectory(rootCount, p, zos);
                     } else {
