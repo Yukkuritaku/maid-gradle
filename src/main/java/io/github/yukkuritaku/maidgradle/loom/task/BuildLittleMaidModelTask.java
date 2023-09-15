@@ -2,10 +2,7 @@ package io.github.yukkuritaku.maidgradle.loom.task;
 
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.zip.X000A_NTFS;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipExtraField;
+import org.apache.commons.compress.archivers.zip.*;
 import org.apache.commons.compress.utils.IOUtils;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
@@ -104,12 +101,12 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipArchiveEntry(pathName.toString());
-                        zipEntry.setExtraFields(new ZipExtraField[]{new X000A_NTFS()});
+                        zipEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
                         zos.putArchiveEntry(zipEntry);
                         IOUtils.copy(new FileInputStream(p.toFile()), zos);
                         zos.closeArchiveEntry();
                     }
-                } catch (IOException e) {
+                } catch (IOException | InstantiationException | IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -132,11 +129,11 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                             } else {
                                 try {
                                     ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toPath().getFileName().toString());
-                                    archiveEntry.setExtraFields(new ZipExtraField[]{new X000A_NTFS()});
+                                    archiveEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
                                     zos.putArchiveEntry(archiveEntry);
                                     IOUtils.copy(new FileInputStream(file), zos);
                                     zos.closeArchiveEntry();
-                                } catch (IOException e) {
+                                } catch (IOException | InstantiationException | IllegalAccessException e) {
                                     throw new RuntimeException(e);
                                 }
                             }
