@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -104,6 +105,11 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 dependencyManager.handleDependencies(project, sharedServiceManager);
                 releaseLock(project);
                 extension.setRefreshDeps(previousRefreshDeps);
+                /*extension.getRunConfigs().stream().forEach(
+                        runConfigSettings -> {
+                            runConfigSettings.properties(Map.of());
+                        }
+                );*/
             });
         }
     }

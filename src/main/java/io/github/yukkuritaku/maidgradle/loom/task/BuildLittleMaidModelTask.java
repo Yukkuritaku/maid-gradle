@@ -29,6 +29,38 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
     }
 
+    private enum FileType{
+        CLASS(".class", ZipOutputStream.DEFLATED),
+        PNG(".png", ZipOutputStream.STORED);
+
+        private final String endsWith;
+        private final int method;
+
+        FileType(String endsWith, int method){
+            this.endsWith = endsWith;
+            this.method = method;
+        }
+
+        public String getEndsWith() {
+            return endsWith;
+        }
+
+        public int getMethod() {
+            return method;
+        }
+    }
+
+    private void setZipCompression(String fileName, ZipEntry entry){
+        if (fileName.endsWith(".class")){
+            entry.setMethod(ZipOutputStream.DEFLATED);
+        }else if (fileName.endsWith(".png")){
+            //pngの時にSTOREに設定する、これをしないとメイドさんの画像を読み込めない
+            //Deflate Descriptor UTF-8だとpngが読み込めないには何か理由があるんだろうか...
+            //読み込めない原因を探るのに丸1日使った、ニッチ過ぎるバグやでこれ
+            entry.setMethod(ZipOutputStream.STORED);
+        }
+    }
+
     /**
      * Taken from <a href="https://qiita.com/ry-s/items/961e295b74edb39768d0">ry-s(R S)'s qiita blog</a>
      *
@@ -43,10 +75,13 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                 try {
                     var pathName = p.subpath(rootCount, p.getNameCount());
                     if (Files.isDirectory(p)) {
-                        zos.putNextEntry(new ZipEntry(pathName + "/"));
+                        ZipEntry entry = new ZipEntry(pathName + "/");
+                        entry.setMethod(ZipOutputStream.STORED);
+                        zos.putNextEntry(entry);
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipEntry(pathName.toString());
+                        setZipCompression(p.toFile().getName(), zipEntry);
                         var attr = Files.readAttributes(p, BasicFileAttributes.class);
                         zipEntry.setLastModifiedTime(attr.lastModifiedTime());
                         zipEntry.setCreationTime(attr.creationTime());
@@ -83,6 +118,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                             } else {
                                 try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
                                     var zipEntry = new ZipEntry(file.toPath().getFileName().toString());
+                                    setZipCompression(file.getName(), zipEntry);
                                     var attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                                     zipEntry.setLastModifiedTime(attr.lastModifiedTime());
                                     zipEntry.setCreationTime(attr.creationTime());
