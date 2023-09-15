@@ -2,13 +2,14 @@ package io.github.yukkuritaku.maidgradle.loom.task;
 
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.X000A_NTFS;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipExtraField;
 import org.apache.commons.compress.utils.IOUtils;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.internal.impldep.org.apache.commons.compress.archivers.zip.X000A_NTFS;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -103,6 +104,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipArchiveEntry(pathName.toString());
+                        zipEntry.setExtraFields(new ZipExtraField[]{new X000A_NTFS()});
                         zos.putArchiveEntry(zipEntry);
                         IOUtils.copy(new FileInputStream(p.toFile()), zos);
                         zos.closeArchiveEntry();
@@ -130,6 +132,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                             } else {
                                 try {
                                     ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toPath().getFileName().toString());
+                                    archiveEntry.setExtraFields(new ZipExtraField[]{new X000A_NTFS()});
                                     zos.putArchiveEntry(archiveEntry);
                                     IOUtils.copy(new FileInputStream(file), zos);
                                     zos.closeArchiveEntry();
