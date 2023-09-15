@@ -73,34 +73,29 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                 new BufferedOutputStream(
                         new FileOutputStream(getOutputDir().file(outputName).get().getAsFile())))) {
             sourceSetOutput.getFiles().forEach(file -> {
-                        File[] lf = file.listFiles();
-                        if (lf != null) {
-                            for (File f : lf) {
-                                if (f.exists()) {
-                                    if (f.isDirectory()) {
-                                        try {
-                                            zipDirectory(f.toPath().getNameCount(), f.toPath(), zos);
-                                        } catch (IOException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    } else {
-                                        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f))) {
-                                            var zipEntry = new ZipEntry(f.toPath().getFileName().toString());
-                                            var attr = Files.readAttributes(f.toPath(), BasicFileAttributes.class);
-                                            zipEntry.setLastModifiedTime(attr.lastModifiedTime());
-                                            zipEntry.setCreationTime(attr.creationTime());
-                                            zipEntry.setLastAccessTime(attr.lastAccessTime());
-                                            zipEntry.setTime(attr.lastModifiedTime().toMillis());
-                                            zos.putNextEntry(zipEntry);
-                                            byte[] b = new byte[1024];
-                                            int count;
-                                            while ((count = bis.read(b)) > 0) {
-                                                zos.write(b, 0, count);
-                                            }
-                                        } catch (IOException e) {
-                                            throw new RuntimeException(e);
-                                        }
+                        if (file.exists()) {
+                            if (file.isDirectory()) {
+                                try {
+                                    zipDirectory(file.toPath().getNameCount(), file.toPath(), zos);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            } else {
+                                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+                                    var zipEntry = new ZipEntry(file.toPath().getFileName().toString());
+                                    var attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+                                    zipEntry.setLastModifiedTime(attr.lastModifiedTime());
+                                    zipEntry.setCreationTime(attr.creationTime());
+                                    zipEntry.setLastAccessTime(attr.lastAccessTime());
+                                    zipEntry.setTime(attr.lastModifiedTime().toMillis());
+                                    zos.putNextEntry(zipEntry);
+                                    byte[] b = new byte[1024];
+                                    int count;
+                                    while ((count = bis.read(b)) > 0) {
+                                        zos.write(b, 0, count);
                                     }
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
                                 }
                             }
                         }
