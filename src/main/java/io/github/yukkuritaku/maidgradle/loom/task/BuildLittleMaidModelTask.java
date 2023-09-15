@@ -52,15 +52,23 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         }
     }
 
-    private void setZipCompression(String fileName, ZipEntry entry, long crc32){
-        if (fileName.endsWith(".class")){
+    private void setZipCompression(File file, ZipEntry entry) throws IOException {
+        if (file.getName().endsWith(".class")){
             entry.setMethod(ZipOutputStream.DEFLATED);
-        }else if (fileName.endsWith(".png")){
+        }else if (file.getName().endsWith(".png")){
             //pngの時にSTOREに設定する、これをしないとメイドさんの画像を読み込めない
             //Deflate Descriptor UTF-8だとpngが読み込めないには何か理由があるんだろうか...
             //読み込めない原因を探るのに丸1日使った、ニッチ過ぎるバグやでこれ
             entry.setMethod(ZipOutputStream.STORED);
-            entry.setCrc(crc32);
+            entry.setCrc(getCrc32(file));
+            try(FileInputStream fis = new FileInputStream(file)) {
+                byte[] b = new byte[1024];
+                int len = fis.read(b);
+                while (len != -1){
+                    len = fis.read(b);
+                }
+                entry.setSize(len);
+            }
         }
     }
 
@@ -96,9 +104,8 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipEntry(pathName.toString());
-                        //setZipCompression(p.toFile().getName(), zipEntry, getCrc32(p.toFile()));
+                        setZipCompression(p.toFile(), zipEntry);
                         var attr = Files.readAttributes(p, BasicFileAttributes.class);
-
                         zipEntry.setLastModifiedTime(attr.lastModifiedTime());
                         zipEntry.setCreationTime(attr.creationTime());
                         zipEntry.setLastAccessTime(attr.lastAccessTime());
@@ -123,7 +130,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         try (ZipOutputStream zos = new ZipOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(getOutputDir().file(outputName).get().getAsFile())))) {
-            zos.setLevel(Deflater.NO_COMPRESSION);
             sourceSetOutput.getFiles().forEach(file -> {
                         if (file.exists()) {
                             if (file.isDirectory()) {
@@ -135,7 +141,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                             } else {
                                 try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
                                     var zipEntry = new ZipEntry(file.toPath().getFileName().toString());
-                                    //setZipCompression(file.getName(), zipEntry, getCrc32(file));
+                                    setZipCompression(file, zipEntry);
 
                                     var attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                                     zipEntry.setLastModifiedTime(attr.lastModifiedTime());
