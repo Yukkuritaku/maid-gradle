@@ -5,6 +5,7 @@ plugins {
 }
 
 group = 'io.github.yukkuritaku'
+def archiveName = 'maid-gradle'
 version = '0.1'
 
 configurations {
@@ -65,5 +66,16 @@ gradlePlugin {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications{
+        releases(MavenPublication){
+            from components.java
+            groupId = "${group}"
+            artifactId = "${archiveName}"
+            version = "${version}"
+        }
+    }
 }
 
