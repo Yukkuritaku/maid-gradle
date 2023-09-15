@@ -2,7 +2,6 @@ package io.github.yukkuritaku.maidgradle.loom;
 
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelTask;
-import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelZipTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradleExtension;
@@ -38,14 +37,10 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             //Tasks
             tasks.register("buildLittleMaidModel", BuildLittleMaidModelTask.class, task -> {
                 task.dependsOn(tasks.named("jar"));
-                task.setDescription("Generate Zipped LittleMaid Model.");
-            });
-            tasks.register("buildLittleMaidModelZip", BuildLittleMaidModelZipTask.class, task -> {
-                task.dependsOn(tasks.named("jar"));
-                task.setDescription("Generate Zipped LittleMaid Model.");
+                task.setDescription("Build LittleMaid Model.");
             });
             var downloadLittleMaidJars = tasks.register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class, task -> {
-                task.setDescription("Download LittleMaid Jar from dropbox.");
+                task.setDescription("Download LittleMaid Jar from dropbox. (This task is automatically runs in gradle configuration)");
             });
             downloadLittleMaidJars.configure(downloadLittleMaidJarTask -> {
                 downloadLittleMaidJarTask.getMinecraftVersion().set(maidGradleExtension.getMinecraftVersion());

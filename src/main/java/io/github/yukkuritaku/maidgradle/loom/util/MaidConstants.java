@@ -13,6 +13,8 @@ public final class MaidConstants {
 
     public static class LittleMaidJarFileUrls{
 
+        //TODO Map使いまくるのもあれだからもっと簡易的にしたい
+
         private static final Map<String, Map<String, String>> LMML_DROPBOX_JAR_MAPPING = Map.of(
                 "1.18.2",
                 Map.of("4.6.4", "https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAFen2Ol-8sEhk8nEyfqlura/LittleMaidModelLoader/Fabric/1.18.x/LMML-1.18.2-4.6.4-Fabric.jar"),

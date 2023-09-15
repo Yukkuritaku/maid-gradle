@@ -24,17 +24,20 @@ public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
 
     @TaskAction
     public void downloadJars() throws IOException{
-        getProject().getLogger().lifecycle("Download LittleMaid Dependencies...");
+        getProject().getLogger().lifecycle(":Download LittleMaid Dependencies...");
         try (ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidModelLoader");
              DownloadExecutor executor = new DownloadExecutor(2)
         ) {
             String minecraftVersion = getMinecraftVersion().get();
+            getProject().getLogger().lifecycle("Current Minecraft version: {}", getMinecraftVersion().get());
+            getProject().getLogger().lifecycle("Current LittleMaidModelLoader version: {}", getLittleMaidModelLoaderVersion().get());
             getMaidExtension()
                     .download(MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(minecraftVersion, getLittleMaidModelLoaderVersion().get()))
                     .progress(new GradleDownloadProgressListener("LittleMaidModelLoader", progressGroup::createProgressLogger))
                     .downloadPathAsync(getMaidExtension().getLMMLOutputDirectory().get().file(
                             "LMML-" + minecraftVersion + "-" + getMaidExtension().getLittleMaidModelLoaderVersion().get() + "-Fabric.jar"
                     ).getAsFile().toPath(), executor);
+            getProject().getLogger().lifecycle("Current LittleMaidReBirth version: {}", getLittleMaidReBirthVersion().get());
             getMaidExtension()
                     .download(MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(minecraftVersion, getLittleMaidReBirthVersion().get()))
                     .progress(new GradleDownloadProgressListener("LittleMaidReBirth", progressGroup::createProgressLogger))
@@ -42,6 +45,6 @@ public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
                             "LMRB-" + minecraftVersion + "-" + getMaidExtension().getLittleMaidReBirthVersion().get() + "-Fabric.jar"
                     ).getAsFile().toPath(), executor);
         }
-        getProject().getLogger().lifecycle("Done!");
+        getProject().getLogger().lifecycle(":Done!");
     }
 }
