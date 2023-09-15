@@ -1,6 +1,10 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
@@ -87,31 +91,27 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
      * @param zos       ZipOutputStream
      * @throws IOException if an I/O error occurs when opening the directory and zipping files
      */
-    private void zipDirectory(int rootCount, Path path, ZipOutputStream zos) throws IOException {
+    private void zipDirectory(int rootCount, Path path, ZipArchiveOutputStream zos) throws IOException {
         try (Stream<Path> paths = Files.list(path)) {
             paths.forEach(p -> {
                 try {
                     var pathName = p.subpath(rootCount, p.getNameCount());
                     if (Files.isDirectory(p)) {
-                        ZipEntry entry = new ZipEntry(pathName + "/");
-                        zos.putNextEntry(entry);
+                        ZipArchiveEntry entry = new ZipArchiveEntry(pathName + "/");
+                        zos.putArchiveEntry(entry);
+                        zos.closeArchiveEntry();
                         zipDirectory(rootCount, p, zos);
                     } else {
-                        var zipEntry = new ZipEntry(pathName.toString());
+                        var zipEntry = new ZipArchiveEntry(pathName.toString());
                         setZipCompression(p.toFile(), zipEntry);
                         var attr = Files.readAttributes(p, BasicFileAttributes.class);
                         zipEntry.setLastModifiedTime(attr.lastModifiedTime());
                         zipEntry.setCreationTime(attr.creationTime());
                         zipEntry.setLastAccessTime(attr.lastAccessTime());
                         zipEntry.setTime(attr.lastModifiedTime().toMillis());
-                        zos.putNextEntry(zipEntry);
-                        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(p.toFile()))) {
-                            byte[] b = new byte[1024];
-                            int count;
-                            while ((count = bis.read(b)) > 0) {
-                                zos.write(b, 0, count);
-                            }
-                        }
+                        zos.putArchiveEntry(zipEntry);
+                        IOUtils.copy(new FileInputStream(p.toFile()), zos);
+                        zos.closeArchiveEntry();
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -121,7 +121,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
     }
 
     private void zip(String outputName, SourceSetOutput sourceSetOutput) {
-        try (ZipOutputStream zos = new ZipOutputStream(
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(getOutputDir().file(outputName).get().getAsFile())))) {
             zos.setLevel(5);
@@ -134,21 +134,16 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                                     throw new RuntimeException(e);
                                 }
                             } else {
-                                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-                                    var zipEntry = new ZipEntry(file.toPath().getFileName().toString());
-                                    setZipCompression(file, zipEntry);
-
+                                try {
+                                    ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toPath().getFileName().toString());
                                     var attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-                                    zipEntry.setLastModifiedTime(attr.lastModifiedTime());
-                                    zipEntry.setCreationTime(attr.creationTime());
-                                    zipEntry.setLastAccessTime(attr.lastAccessTime());
-                                    zipEntry.setTime(attr.lastModifiedTime().toMillis());
-                                    zos.putNextEntry(zipEntry);
-                                    byte[] b = new byte[1024];
-                                    int count;
-                                    while ((count = bis.read(b)) > 0) {
-                                        zos.write(b, 0, count);
-                                    }
+                                    archiveEntry.setLastModifiedTime(attr.lastModifiedTime());
+                                    archiveEntry.setCreationTime(attr.creationTime());
+                                    archiveEntry.setLastAccessTime(attr.lastAccessTime());
+                                    archiveEntry.setTime(attr.lastModifiedTime().toMillis());
+                                    zos.putArchiveEntry(archiveEntry);
+                                    IOUtils.copy(new FileInputStream(file), zos);
+                                    zos.closeArchiveEntry();
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
