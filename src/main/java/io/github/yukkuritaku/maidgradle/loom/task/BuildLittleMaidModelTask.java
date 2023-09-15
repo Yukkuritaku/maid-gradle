@@ -34,51 +34,12 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
     }
 
-    private enum FileType{
-        CLASS(".class", ZipOutputStream.DEFLATED),
-        PNG(".png", ZipOutputStream.STORED);
-
-        private final String endsWith;
-        private final int method;
-
-        FileType(String endsWith, int method){
-            this.endsWith = endsWith;
-            this.method = method;
+    private boolean setMethod(File file, ZipArchiveEntry archiveEntry){
+        if (file.getName().endsWith(".png")){
+            archiveEntry.setMethod(ZipEntry.STORED);
+            return true;
         }
-
-        public String getEndsWith() {
-            return endsWith;
-        }
-
-        public int getMethod() {
-            return method;
-        }
-    }
-
-    private void setZipCompression(File file, ZipEntry entry) throws IOException {
-        /*if (file.getName().endsWith(".class")){
-            entry.setMethod(ZipOutputStream.DEFLATED);
-        }else if (file.getName().endsWith(".png")){
-            //pngの時にSTOREに設定する、これをしないとメイドさんの画像を読み込めない
-            //Deflate Descriptor UTF-8だとpngが読み込めないには何か理由があるんだろうか...
-            //読み込めない原因を探るのに丸1日使った、ニッチ過ぎるバグやでこれ
-            entry.setMethod(ZipOutputStream.STORED);
-            entry.setCrc(getCrc32(file));
-            entry.setSize(Files.size(file.toPath()));
-        }*/
-    }
-
-    private static long getCrc32(File file) throws IOException {
-        CRC32 crc32 = new CRC32();
-        try(FileInputStream fis = new FileInputStream(file)) {
-            byte[] b = new byte[1024];
-            int len = fis.read(b);
-            while (len != -1){
-                crc32.update(b, 0, len);
-                len = fis.read(b);
-            }
-        }
-        return crc32.getValue();
+        return false;
     }
 
     /**
@@ -102,6 +63,8 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                     } else {
                         var zipEntry = new ZipArchiveEntry(pathName.toString());
                         zipEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
+
+                        boolean m = setMethod(p.toFile(), zipEntry);
                         zos.putArchiveEntry(zipEntry);
                         IOUtils.copy(new FileInputStream(p.toFile()), zos);
                         zos.closeArchiveEntry();
