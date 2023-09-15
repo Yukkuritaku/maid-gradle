@@ -123,7 +123,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         try (ZipOutputStream zos = new ZipOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(getOutputDir().file(outputName).get().getAsFile())))) {
-            zos.setMethod(ZipOutputStream.STORED);
             zos.setLevel(Deflater.NO_COMPRESSION);
             sourceSetOutput.getFiles().forEach(file -> {
                         if (file.exists()) {
