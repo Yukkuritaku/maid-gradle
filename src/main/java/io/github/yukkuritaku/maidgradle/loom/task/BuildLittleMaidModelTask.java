@@ -103,12 +103,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipArchiveEntry(pathName.toString());
-                        setZipCompression(p.toFile(), zipEntry);
-                        var attr = Files.readAttributes(p, BasicFileAttributes.class);
-                        zipEntry.setLastModifiedTime(attr.lastModifiedTime());
-                        zipEntry.setCreationTime(attr.creationTime());
-                        zipEntry.setLastAccessTime(attr.lastAccessTime());
-                        zipEntry.setTime(attr.lastModifiedTime().toMillis());
                         zos.putArchiveEntry(zipEntry);
                         IOUtils.copy(new FileInputStream(p.toFile()), zos);
                         zos.closeArchiveEntry();
@@ -136,11 +130,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                             } else {
                                 try {
                                     ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toPath().getFileName().toString());
-                                    var attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-                                    archiveEntry.setLastModifiedTime(attr.lastModifiedTime());
-                                    archiveEntry.setCreationTime(attr.creationTime());
-                                    archiveEntry.setLastAccessTime(attr.lastAccessTime());
-                                    archiveEntry.setTime(attr.lastModifiedTime().toMillis());
                                     zos.putArchiveEntry(archiveEntry);
                                     IOUtils.copy(new FileInputStream(file), zos);
                                     zos.closeArchiveEntry();
