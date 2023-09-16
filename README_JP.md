@@ -9,17 +9,17 @@
 ## 導入方法
 
 `settings.gradle`のpluginManagementにリポジトリとスクリプトを追加します。 
-```diff_gradle
+```gradle
 pluginManagement {
-+	resolutionStrategy {
-+		eachPlugin {
-+			if(requested.id.toString() == "io.github.yukkuritaku.maid-gradle")
-+				useModule("com.github.Yukkuritaku.maid-gradle:io.github.yukkuritaku.maid-gradle.gradle.plugin:使いたいバージョン")
-+		}
-+	}
+	resolutionStrategy {
+		eachPlugin {
+			if(requested.id.toString() == "io.github.yukkuritaku.maid-gradle")
+				useModule("com.github.Yukkuritaku.maid-gradle:io.github.yukkuritaku.maid-gradle.gradle.plugin:使いたいバージョン")
+		}
+	}
 	repositories {
-+	    //jitpackを追加する
-+       maven { url = 'https://jitpack.io' }
+	    //jitpackを追加する
+       maven { url = 'https://jitpack.io' }
 		maven {
 			name = 'Fabric'
 			url = 'https://maven.fabricmc.net/'
@@ -30,11 +30,11 @@ pluginManagement {
 }
 ```
 `build.gradle`のプラグインに`io.github.yukkuritaku.maid-gradle`を追加し、maidgradleの設定を追加します。
-```diff_gradle
+```gradle
 plugins{
 	id 'fabric-loom' version '1.3-SNAPSHOT'
-+	//適用するにはfabric-loomの下に設定する必要があります。
-+	id 'io.github.yukkuritaku.maid-gradle' version 'f6399d2de1'
+	//適用するにはfabric-loomの下に設定する必要があります。
+	id 'io.github.yukkuritaku.maid-gradle' version 'f6399d2de1'
 	id 'maven-publish'
 }
 
