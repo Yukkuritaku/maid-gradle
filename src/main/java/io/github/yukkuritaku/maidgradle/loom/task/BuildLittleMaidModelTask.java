@@ -23,9 +23,6 @@ import java.util.zip.ZipEntry;
 
 public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
-    @InputFile
-    public abstract RegularFileProperty getReadMeFile();
-
     @Input
     public abstract Property<String> getOutputName();
 
@@ -38,7 +35,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
     public BuildLittleMaidModelTask() {
         super();
         this.extension = getProject().getExtensions().getByType(MaidGradleExtension.class);
-        getReadMeFile().convention(extension.getReadMeFile());
         getOutputName().convention("littleMaidMob-" + getProject().getName() + "-" + getProject().getVersion() + ".zip");
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
     }
@@ -134,15 +130,16 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     private void zip(String outputName, SourceSetOutput sourceSetOutput) {
         try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(getOutputDir().file(outputName).get().getAsFile())) {
-            if (!getReadMeFile().isPresent()) {
+
+            if (!this.extension.getReadMeFile().isPresent()) {
                 throw new NullValueException("Must be set Readme file!");
             }
             zos.setLevel(this.extension.getZipConfig().getCompressionLevel().get());
             try {
-                ZipArchiveEntry archiveEntry = new ZipArchiveEntry(getReadMeFile().getAsFile().get().getName());
+                ZipArchiveEntry archiveEntry = new ZipArchiveEntry(this.extension.getReadMeFile().getAsFile().get().getName());
                 checkUseNtfs(archiveEntry);
                 zos.putArchiveEntry(archiveEntry);
-                IOUtils.copy(new FileInputStream(getReadMeFile().getAsFile().get()), zos);
+                IOUtils.copy(new FileInputStream(this.extension.getReadMeFile().getAsFile().get()), zos);
                 zos.closeArchiveEntry();
             }catch (IOException | InstantiationException | IllegalAccessException e){
                 throw new RuntimeException(e);
