@@ -120,8 +120,8 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
 
     public abstract RegularFileProperty getReadMeFile();
 
-    public void readMeFile(RegularFileProperty fileProperty){
-        getReadMeFile().set(fileProperty);
+    public void readMeFile(RegularFileProperty readMeFile){
+        getReadMeFile().set(readMeFile);
     }
 
     public ZipConfigExtensionAPI getZipConfig(){
