@@ -13,6 +13,7 @@ import org.gradle.internal.impldep.software.amazon.ion.NullValueException;
 import javax.inject.Inject;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.atomic.AtomicLong;
@@ -132,7 +133,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(getOutputDir().file(outputName).get().getAsFile())) {
 
             if (!this.extension.getReadMeFile().isPresent()) {
-                throw new NullValueException("Must be set Readme file!");
+                throw new NoSuchFileException("Must be set Readme file!");
             }
             zos.setLevel(this.extension.getZipConfig().getCompressionLevel().get());
             try {
