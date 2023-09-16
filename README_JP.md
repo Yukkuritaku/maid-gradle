@@ -4,6 +4,7 @@
 現在導入しているタスクはメイドさんのjarダウンロードと、zipビルドです。
 
 ## タスク紹介
+タスクグループは`maidgradle`にあります。
 
 - `buildLittleMaidModel`: メイドさんのモデルをビルドします。(build/classesの中にあるファイルとbuild/resourcesの中にあるファイルをzip化します。)
 - `downloadLittleMaidJars`: リトルメイドModのJarファイルをダウンロードします。
