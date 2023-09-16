@@ -23,6 +23,7 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
     protected final Property<String> minecraftVersion;
     protected final Property<String> littleMaidModelLoader;
     protected final Property<String> littleMaidReBirthVersion;
+    protected final RegularFileProperty readMeFile;
 
     protected final ZipConfigExtensionAPI zipConfig;
 
@@ -32,6 +33,7 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
         this.minecraftVersion = project.getObjects().property(String.class);
         this.littleMaidModelLoader = project.getObjects().property(String.class);
         this.littleMaidReBirthVersion = project.getObjects().property(String.class);
+        this.readMeFile = project.getObjects().fileProperty();
         this.zipConfig = project.getObjects().newInstance(ZipConfigExtensionAPI.class);
         this.zipConfig.getUseNtfs().convention(true);
         this.zipConfig.getCompressionLevel().convention(Deflater.DEFAULT_COMPRESSION);
@@ -118,7 +120,7 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
 
     public abstract RegularFileProperty getReadMeFile();
 
-    public void setReadMeFile(RegularFileProperty fileProperty){
+    public void readMeFile(RegularFileProperty fileProperty){
         getReadMeFile().set(fileProperty);
     }
 
