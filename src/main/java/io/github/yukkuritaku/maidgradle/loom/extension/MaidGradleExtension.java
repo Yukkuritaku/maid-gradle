@@ -11,6 +11,7 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
@@ -23,8 +24,6 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
     protected final Property<String> littleMaidModelLoader;
     protected final Property<String> littleMaidReBirthVersion;
 
-    protected final RegularFileProperty readMeFile;
-
     protected final ZipConfigExtensionAPI zipConfig;
 
     @Inject
@@ -33,7 +32,6 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
         this.minecraftVersion = project.getObjects().property(String.class);
         this.littleMaidModelLoader = project.getObjects().property(String.class);
         this.littleMaidReBirthVersion = project.getObjects().property(String.class);
-        this.readMeFile = project.getObjects().fileProperty();
         this.zipConfig = project.getObjects().newInstance(ZipConfigExtensionAPI.class);
         this.zipConfig.getUseNtfs().convention(true);
         this.zipConfig.getCompressionLevel().convention(Deflater.DEFAULT_COMPRESSION);
@@ -41,6 +39,7 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
         this.zipConfig.getFolderZipMode().convention(ZipEntry.STORED);
         getLMMLOutputDirectory().convention(project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-jar")));
         getLMRBOutputDirectory().convention(project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmrb-jar")));
+        getReadMeFile().convention(project.getLayout().getProjectDirectory().file("LittleMaidModel_ReadMe.txt"));
     }
 
     private boolean manualRefreshDeps() {
@@ -120,7 +119,7 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
     public abstract RegularFileProperty getReadMeFile();
 
     public void readMeFile(RegularFileProperty fileProperty){
-        this.readMeFile.set(fileProperty);
+        getReadMeFile().set(fileProperty);
     }
 
     public ZipConfigExtensionAPI getZipConfig(){
