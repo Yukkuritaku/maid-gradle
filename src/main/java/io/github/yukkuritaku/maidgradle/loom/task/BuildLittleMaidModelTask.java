@@ -131,16 +131,15 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     private void zip(String outputName, SourceSetOutput sourceSetOutput) {
         try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(getOutputDir().file(outputName).get().getAsFile())) {
-
             if (!this.extension.getReadMeFile().isPresent()) {
                 throw new NoSuchFileException("Must be set Readme file!");
             }
             zos.setLevel(this.extension.getZipConfig().getCompressionLevel().get());
             try {
-                ZipArchiveEntry archiveEntry = new ZipArchiveEntry(this.extension.getReadMeFile().getAsFile().get().getName());
+                ZipArchiveEntry archiveEntry = new ZipArchiveEntry(this.extension.getReadMeFile().get());
                 checkUseNtfs(archiveEntry);
                 zos.putArchiveEntry(archiveEntry);
-                IOUtils.copy(new FileInputStream(this.extension.getReadMeFile().getAsFile().get()), zos);
+                IOUtils.copy(new FileInputStream(getProject().getLayout().getProjectDirectory().file(this.extension.getReadMeFile()).get().getAsFile()), zos);
                 zos.closeArchiveEntry();
             }catch (IOException | InstantiationException | IllegalAccessException e){
                 throw new RuntimeException(e);
