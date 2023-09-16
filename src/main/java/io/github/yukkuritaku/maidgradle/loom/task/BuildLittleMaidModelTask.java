@@ -36,7 +36,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     private void setMethod(File file, ZipArchiveEntry entry) throws IOException {
         CRC32 crc32 = new CRC32();
-        if (file.isDirectory()){
+        /*if (file.isDirectory()){
             HashMap<Path, BasicFileAttributes> hashMap = new HashMap<>();
             BiPredicate<Path, BasicFileAttributes> predicate = (p, a) -> hashMap.put(p, a) == null;
             AtomicLong size = new AtomicLong();
@@ -60,7 +60,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
             entry.setSize(size.get());
             entry.setCrc(crc32.getValue());
 
-        }else {
+        }else {*/
             if (file.getName().endsWith(".png")){
                 entry.setMethod(ZipEntry.STORED);
                 entry.setSize(Files.size(file.toPath()));
@@ -75,7 +75,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                     throw new RuntimeException(e);
                 }
                 entry.setCrc(crc32.getValue());
-            }
+           // }
         }
     }
 
@@ -102,7 +102,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         var zipEntry = new ZipArchiveEntry(pathName.toString());
                         setMethod(p.toFile(), zipEntry);
                         zipEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
-
                         zos.putArchiveEntry(zipEntry);
                         IOUtils.copy(new FileInputStream(p.toFile()), zos);
                         zos.closeArchiveEntry();
