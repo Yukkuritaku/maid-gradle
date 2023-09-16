@@ -48,6 +48,10 @@ dependencies {
 
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation(gradleTestKit())
+    testImplementation('org.spockframework:spock-core:2.3-groovy-3.0') {
+        exclude module: 'groovy-all'
+    }
 }
 
 gradlePlugin {

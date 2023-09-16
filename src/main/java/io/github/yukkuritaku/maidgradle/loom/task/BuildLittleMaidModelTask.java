@@ -1,18 +1,20 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
+import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import org.apache.commons.compress.archivers.zip.*;
 import org.apache.commons.compress.utils.IOUtils;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.internal.impldep.software.amazon.ion.NullValueException;
 
 import javax.inject.Inject;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
@@ -21,29 +23,66 @@ import java.util.zip.ZipEntry;
 
 public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
+    @InputFile
+    public abstract RegularFileProperty getReadMeFile();
+
     @Input
     public abstract Property<String> getOutputName();
 
     @OutputDirectory
     public abstract DirectoryProperty getOutputDir();
 
+    private final MaidGradleExtension extension;
+
     @Inject
     public BuildLittleMaidModelTask() {
         super();
+        this.extension = getProject().getExtensions().getByType(MaidGradleExtension.class);
+        getReadMeFile().convention(extension.getReadMeFile());
         getOutputName().convention("littleMaidMob-" + getProject().getName() + "-" + getProject().getVersion() + ".zip");
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
+    }
+
+    private void checkUseNtfs(ZipArchiveEntry entry) throws InstantiationException, IllegalAccessException {
+        if (this.extension.getZipConfig().getUseNtfs().get()){
+            entry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
+        }
     }
 
     private void setMethod(File file, ZipArchiveEntry entry) throws IOException {
         CRC32 crc32 = new CRC32();
         if (file.isDirectory()) {
-            BiPredicate<Path, BasicFileAttributes> predicate = (p, a) ->
-                    a.isRegularFile();
-            AtomicLong size = new AtomicLong();
-            try (Stream<Path> stream = Files.find(file.toPath(), Integer.MAX_VALUE, predicate)) {
-                stream.forEach(path -> {
-                    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(path.toFile()))) {
-                        size.addAndGet(Files.size(path));
+            if (this.extension.getZipConfig().getFolderZipMode().get() == ZipEntry.STORED) {
+                BiPredicate<Path, BasicFileAttributes> predicate = (p, a) ->
+                        a.isRegularFile();
+                AtomicLong size = new AtomicLong();
+                try (Stream<Path> stream = Files.find(file.toPath(), Integer.MAX_VALUE, predicate)) {
+                    stream.forEach(path -> {
+                        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(path.toFile()))) {
+                            size.addAndGet(Files.size(path));
+                            byte[] buf = new byte[1024];
+                            int len;
+                            while ((len = bis.read(buf)) > 0) {
+                                crc32.update(buf, 0, len);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                entry.setMethod(ZipEntry.STORED);
+                entry.setSize(size.get());
+                entry.setCrc(crc32.getValue());
+            }
+        } else {
+            //pngの場合は無圧縮にする
+            if (file.getName().endsWith(".png")) {
+                if (this.extension.getZipConfig().getPngZipMode().get() == ZipEntry.STORED) {
+                    entry.setMethod(ZipEntry.STORED);
+                    entry.setSize(Files.size(file.toPath()));
+                    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
                         byte[] buf = new byte[1024];
                         int len;
                         while ((len = bis.read(buf)) > 0) {
@@ -52,28 +91,8 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                });
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            entry.setMethod(ZipEntry.STORED);
-            entry.setSize(size.get());
-            entry.setCrc(crc32.getValue());
-        } else {
-            //pngの場合は無圧縮にする
-            if (file.getName().endsWith(".png")) {
-                entry.setMethod(ZipEntry.STORED);
-                entry.setSize(Files.size(file.toPath()));
-                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = bis.read(buf)) > 0) {
-                        crc32.update(buf, 0, len);
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    entry.setCrc(crc32.getValue());
                 }
-                entry.setCrc(crc32.getValue());
             }
         }
     }
@@ -94,13 +113,14 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                     if (Files.isDirectory(p)) {
                         ZipArchiveEntry entry = new ZipArchiveEntry(pathName + "/");
                         setMethod(p.toFile(), entry);
+                        checkUseNtfs(entry);
                         zos.putArchiveEntry(entry);
                         zos.closeArchiveEntry();
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipArchiveEntry(pathName.toString());
                         setMethod(p.toFile(), zipEntry);
-                        zipEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
+                        checkUseNtfs(zipEntry);
                         zos.putArchiveEntry(zipEntry);
                         IOUtils.copy(new FileInputStream(p.toFile()), zos);
                         zos.closeArchiveEntry();
@@ -114,7 +134,19 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     private void zip(String outputName, SourceSetOutput sourceSetOutput) {
         try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(getOutputDir().file(outputName).get().getAsFile())) {
-            zos.setLevel(5);
+            if (!getReadMeFile().isPresent()) {
+                throw new NullValueException("Must be set Readme file!");
+            }
+            zos.setLevel(this.extension.getZipConfig().getCompressionLevel().get());
+            try {
+                ZipArchiveEntry archiveEntry = new ZipArchiveEntry(getReadMeFile().getAsFile().get().getName());
+                checkUseNtfs(archiveEntry);
+                zos.putArchiveEntry(archiveEntry);
+                IOUtils.copy(new FileInputStream(getReadMeFile().getAsFile().get()), zos);
+                zos.closeArchiveEntry();
+            }catch (IOException | InstantiationException | IllegalAccessException e){
+                throw new RuntimeException(e);
+            }
             sourceSetOutput.getFiles().forEach(file -> {
                         if (file.exists()) {
                             if (file.isDirectory()) {
@@ -127,7 +159,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                                 try {
                                     ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toPath().getFileName().toString());
                                     setMethod(file, archiveEntry);
-                                    archiveEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
+                                    checkUseNtfs(archiveEntry);
                                     zos.putArchiveEntry(archiveEntry);
                                     IOUtils.copy(new FileInputStream(file), zos);
                                     zos.closeArchiveEntry();

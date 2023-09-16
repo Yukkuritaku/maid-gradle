@@ -1,14 +1,19 @@
 package io.github.yukkuritaku.maidgradle.loom.extension;
 
 import groovy.lang.GroovyObjectSupport;
+import io.github.yukkuritaku.maidgradle.loom.api.ZipConfigExtensionAPI;
 import net.fabricmc.loom.util.download.Download;
 import net.fabricmc.loom.util.download.DownloadBuilder;
+import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 
 import javax.inject.Inject;
 import java.net.URISyntaxException;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
 
 public abstract class MaidGradleExtension extends GroovyObjectSupport{
 
@@ -18,13 +23,22 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
     protected final Property<String> littleMaidModelLoader;
     protected final Property<String> littleMaidReBirthVersion;
 
+    protected final RegularFileProperty readMeFile;
+
+    protected final ZipConfigExtensionAPI zipConfig;
+
     @Inject
     public MaidGradleExtension(final Project project){
         this.project = project;
         this.minecraftVersion = project.getObjects().property(String.class);
         this.littleMaidModelLoader = project.getObjects().property(String.class);
         this.littleMaidReBirthVersion = project.getObjects().property(String.class);
-
+        this.readMeFile = project.getObjects().fileProperty();
+        this.zipConfig = project.getObjects().newInstance(ZipConfigExtensionAPI.class);
+        this.zipConfig.getUseNtfs().convention(true);
+        this.zipConfig.getCompressionLevel().convention(Deflater.DEFAULT_COMPRESSION);
+        this.zipConfig.getPngZipMode().convention(ZipEntry.STORED);
+        this.zipConfig.getFolderZipMode().convention(ZipEntry.STORED);
         getLMMLOutputDirectory().convention(project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmml-jar")));
         getLMRBOutputDirectory().convention(project.getObjects().directoryProperty().convention(project.getLayout().getBuildDirectory().dir("lmrb-jar")));
     }
@@ -103,5 +117,18 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      */
     public abstract DirectoryProperty getLMRBOutputDirectory();
 
+    public abstract RegularFileProperty getReadMeFile();
+
+    public void readMeFile(RegularFileProperty fileProperty){
+        this.readMeFile.set(fileProperty);
+    }
+
+    public ZipConfigExtensionAPI getZipConfig(){
+        return this.zipConfig;
+    }
+
+    public void zipConfig(Action<ZipConfigExtensionAPI> action){
+        action.execute(getZipConfig());
+    }
 
 }
