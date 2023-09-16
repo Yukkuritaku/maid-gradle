@@ -1,7 +1,6 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.*;
 import org.apache.commons.compress.utils.IOUtils;
 import org.gradle.api.file.DirectoryProperty;
@@ -13,11 +12,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 import java.util.zip.CRC32;
-import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
@@ -32,6 +32,51 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
         super();
         getOutputName().convention("littleMaidMob-" + getProject().getName() + "-" + getProject().getVersion() + ".zip");
         getOutputDir().convention(getProject().getLayout().getBuildDirectory().dir("littlemaidmodel-build"));
+    }
+
+    private void setMethod(File file, ZipArchiveEntry entry) throws IOException {
+        CRC32 crc32 = new CRC32();
+        if (file.isDirectory()){
+            HashMap<Path, BasicFileAttributes> hashMap = new HashMap<>();
+            BiPredicate<Path, BasicFileAttributes> predicate = (p, a) -> hashMap.put(p, a) == null;
+            AtomicLong size = new AtomicLong();
+            try(Stream<Path> stream = Files.find(file.toPath(), Integer.MAX_VALUE, predicate)) {
+                stream.forEach(path -> {
+                    try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(path.toFile()))) {
+                        size.addAndGet(Files.size(path));
+                        byte[] buf = new byte[1024];
+                        int len;
+                        while ((len = bis.read(buf)) > 0) {
+                            crc32.update(buf, 0, len);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }catch (IOException e){
+                throw new RuntimeException(e);
+            }
+            entry.setMethod(ZipEntry.STORED);
+            entry.setSize(size.get());
+            entry.setCrc(crc32.getValue());
+
+        }else {
+            if (file.getName().endsWith(".png")){
+                entry.setMethod(ZipEntry.STORED);
+                entry.setSize(Files.size(file.toPath()));
+                try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+                    byte[] buf = new byte[1024];
+                    int len = 0;
+
+                    while ((len = bis.read(buf)) > 0) {
+                        crc32.update(buf, 0, len);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                entry.setCrc(crc32.getValue());
+            }
+        }
     }
 
     /**
@@ -49,11 +94,13 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                     var pathName = p.subpath(rootCount, p.getNameCount());
                     if (Files.isDirectory(p)) {
                         ZipArchiveEntry entry = new ZipArchiveEntry(pathName + "/");
+                        setMethod(p.toFile(), entry);
                         zos.putArchiveEntry(entry);
                         zos.closeArchiveEntry();
                         zipDirectory(rootCount, p, zos);
                     } else {
                         var zipEntry = new ZipArchiveEntry(pathName.toString());
+                        setMethod(p.toFile(), zipEntry);
                         zipEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
 
                         zos.putArchiveEntry(zipEntry);
@@ -81,6 +128,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                             } else {
                                 try {
                                     ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toPath().getFileName().toString());
+                                    setMethod(file, archiveEntry);
                                     archiveEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
                                     zos.putArchiveEntry(archiveEntry);
                                     IOUtils.copy(new FileInputStream(file), zos);
