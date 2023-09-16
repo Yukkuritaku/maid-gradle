@@ -34,7 +34,7 @@ pluginManagement {
     }
 }
 ```
-`build.gradle`のプラグインに`io.github.yukkuritaku.maid-gradle`を追加し、maidgradleの設定を追加します。
+`build.gradle`のプラグインの`fabric-loom`の下に`io.github.yukkuritaku.maid-gradle`を追加し、maidgradleの設定を追加します。
 ```gradle
 plugins{
     id 'fabric-loom' version '1.3-SNAPSHOT'
@@ -58,7 +58,6 @@ maidgradle {
 }
 ```
 後はプロジェクトをリロードすれば完了です！
-
 
 ## maidgradleの全体設定
 
