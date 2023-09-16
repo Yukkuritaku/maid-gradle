@@ -36,13 +36,13 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
 
     private void setMethod(File file, ZipArchiveEntry entry) throws IOException {
         CRC32 crc32 = new CRC32();
-        /*if (file.isDirectory()){
-            HashMap<Path, BasicFileAttributes> hashMap = new HashMap<>();
-            BiPredicate<Path, BasicFileAttributes> predicate = (p, a) -> hashMap.put(p, a) == null;
+        if (file.isDirectory()) {
+            BiPredicate<Path, BasicFileAttributes> predicate = (p, a) ->
+                    a.isRegularFile();
             AtomicLong size = new AtomicLong();
-            try(Stream<Path> stream = Files.find(file.toPath(), Integer.MAX_VALUE, predicate)) {
+            try (Stream<Path> stream = Files.find(file.toPath(), Integer.MAX_VALUE, predicate)) {
                 stream.forEach(path -> {
-                    try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(path.toFile()))) {
+                    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(path.toFile()))) {
                         size.addAndGet(Files.size(path));
                         byte[] buf = new byte[1024];
                         int len;
@@ -53,18 +53,18 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         throw new RuntimeException(e);
                     }
                 });
-            }catch (IOException e){
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             entry.setMethod(ZipEntry.STORED);
             entry.setSize(size.get());
             entry.setCrc(crc32.getValue());
-
-        }else {*/
-            if (file.getName().endsWith(".png")){
+        } else {
+            //pngの場合は無圧縮にする
+            if (file.getName().endsWith(".png")) {
                 entry.setMethod(ZipEntry.STORED);
                 entry.setSize(Files.size(file.toPath()));
-                try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
                     byte[] buf = new byte[1024];
                     int len = 0;
 
@@ -75,12 +75,12 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                     throw new RuntimeException(e);
                 }
                 entry.setCrc(crc32.getValue());
-           // }
+            }
         }
     }
 
     /**
-     * Taken from <a href="https://qiita.com/ry-s/items/961e295b74edb39768d0">ry-s(R S)'s qiita blog</a>
+     * Taken and modified from <a href="https://qiita.com/ry-s/items/961e295b74edb39768d0">ry-s(R S)'s qiita blog</a>
      *
      * @param rootCount Name count
      * @param path      filePath
