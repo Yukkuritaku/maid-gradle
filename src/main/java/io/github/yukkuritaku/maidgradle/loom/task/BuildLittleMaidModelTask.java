@@ -101,8 +101,6 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                         var zipEntry = new ZipArchiveEntry(pathName.toString());
                         setMethod(p.toFile(), zipEntry);
                         zipEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
-                        zipEntry.removeExtraField(UnicodePathExtraField.UPATH_ID);
-                        zipEntry.removeExtraField(UnicodeCommentExtraField.UCOM_ID);
                         zos.putArchiveEntry(zipEntry);
                         IOUtils.copy(new FileInputStream(p.toFile()), zos);
                         zos.closeArchiveEntry();
@@ -129,10 +127,7 @@ public abstract class BuildLittleMaidModelTask extends AbstractMaidTask {
                                 try {
                                     ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toPath().getFileName().toString());
                                     setMethod(file, archiveEntry);
-
                                     archiveEntry.addExtraField(ExtraFieldUtils.createExtraField(X000A_NTFS.HEADER_ID));
-                                    archiveEntry.removeExtraField(UnicodePathExtraField.UPATH_ID);
-                                    archiveEntry.removeExtraField(UnicodeCommentExtraField.UCOM_ID);
                                     zos.putArchiveEntry(archiveEntry);
                                     IOUtils.copy(new FileInputStream(file), zos);
                                     zos.closeArchiveEntry();
