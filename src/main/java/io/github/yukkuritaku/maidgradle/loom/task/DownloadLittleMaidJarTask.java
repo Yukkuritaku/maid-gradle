@@ -1,6 +1,5 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
-import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.util.download.DownloadExecutor;
 import net.fabricmc.loom.util.download.GradleDownloadProgressListener;

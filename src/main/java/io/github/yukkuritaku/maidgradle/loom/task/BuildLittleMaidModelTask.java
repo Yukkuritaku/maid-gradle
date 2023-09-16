@@ -2,16 +2,23 @@ package io.github.yukkuritaku.maidgradle.loom.task;
 
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import org.apache.commons.compress.archivers.zip.*;
+import org.apache.commons.compress.archivers.zip.ExtraFieldUtils;
+import org.apache.commons.compress.archivers.zip.X000A_NTFS;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.*;
-import org.gradle.internal.impldep.software.amazon.ion.NullValueException;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.SourceSetOutput;
+import org.gradle.api.tasks.TaskAction;
 
 import javax.inject.Inject;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;

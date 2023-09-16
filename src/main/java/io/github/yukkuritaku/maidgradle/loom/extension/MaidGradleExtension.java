@@ -7,11 +7,9 @@ import net.fabricmc.loom.util.download.DownloadBuilder;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.net.URISyntaxException;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
