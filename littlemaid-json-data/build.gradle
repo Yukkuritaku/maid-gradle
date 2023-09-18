@@ -1,0 +1,21 @@
+plugins{
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation gradleApi()
+    implementation 'com.google.code.gson:gson:2.10.1'
+    compileOnly 'org.jetbrains:annotations:24.0.1'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release.set(17)
+    it.options.encoding = 'UTF-8'
+}
+
+

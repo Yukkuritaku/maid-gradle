@@ -8,6 +8,6 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
+include("littlemaid-json-data")
 rootProject.name = 'maid-gradle'
 
