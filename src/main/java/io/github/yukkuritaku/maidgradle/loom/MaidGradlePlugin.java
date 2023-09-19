@@ -59,6 +59,8 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             String lmmlOutputDir = maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getAbsolutePath().replace("\\", "/");
             String lmrbOutputDir = maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getAbsolutePath().replace("\\", "/");
 
+            project.getLogger().lifecycle(lmmlOutputDir.replace(projectDir, ""));
+            project.getLogger().lifecycle(lmrbOutputDir.replace(projectDir, ""));
             //Add LittleMaid libraries directory
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
                         flatDirectoryArtifactRepository.dir(lmmlOutputDir.replace(projectDir, ""));
