@@ -13,7 +13,10 @@ import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.configuration.LoomDependencyManager;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.download.DownloadException;
+import net.fabricmc.loom.util.download.DownloadExecutor;
+import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
 import net.fabricmc.loom.util.gradle.GradleUtils;
+import net.fabricmc.loom.util.gradle.ProgressGroup;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import net.fabricmc.loom.util.service.ScopedSharedServiceManager;
 import net.fabricmc.loom.util.service.SharedServiceManager;
@@ -31,10 +34,79 @@ import java.util.function.Consumer;
 public class MaidGradlePlugin implements BootstrappedPlugin {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
-
+    
     public static final String MAID_GRADLE_VERSION = Objects.requireNonNullElse(MaidGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
 
+    private String lastStr(String regex, String inputStr){
+        String[] splitted = inputStr.split(regex);
+        return splitted[splitted.length - 1];
+    }
+
+    private void downloadJars(Project project, MaidGradleExtension maidGradleExtension) throws IOException {
+        project.getLogger().lifecycle(":download LittleMaid Dependencies...");
+        try (ProgressGroup progressGroup = new ProgressGroup(project, "Download LittleMaidModelLoader");
+             DownloadExecutor executor = new DownloadExecutor(Math.min(Runtime.getRuntime().availableProcessors(), 6))
+        ) {
+            String minecraftVersion = maidGradleExtension.getMinecraftVersion().get();
+            String lmmlVersion = maidGradleExtension.getLittleMaidModelLoaderVersion().get();
+            project.getLogger().lifecycle("Current Minecraft version: {}", minecraftVersion);
+            project.getLogger().lifecycle("Current LittleMaidModelLoader version: {}", lmmlVersion);
+
+            String lmmlDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(minecraftVersion, lmmlVersion);
+            String lmmlFileName = lastStr("/", lmmlDownloadUrl).replace("?dl=1", "");
+            maidGradleExtension
+                    .download(lmmlDownloadUrl)
+                    .progress(new GradleDownloadProgressListener("LittleMaidModelLoader", progressGroup::createProgressLogger))
+                    .downloadPathAsync(maidGradleExtension.getLMMLOutputDirectory().get().file(lmmlFileName).getAsFile().toPath(), executor);
+
+            String lmmlDevDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMMLDevDownloadUrl(minecraftVersion, lmmlVersion);
+            if (lmmlDevDownloadUrl != null) {
+                String lmmlDevFileName = lastStr("/", lmmlDevDownloadUrl).replace("?dl=1", "");
+                maidGradleExtension
+                        .download(lmmlDevDownloadUrl)
+                        .progress(new GradleDownloadProgressListener("LittleMaidModelLoader Dev", progressGroup::createProgressLogger))
+                        .downloadPathAsync(maidGradleExtension.getLMMLOutputDirectory().get().file(lmmlDevFileName).getAsFile().toPath(), executor);
+            }
+
+            String lmmlSourcesDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMMLSourceDownloadUrl(minecraftVersion, lmmlVersion);
+            if (lmmlSourcesDownloadUrl != null){
+                String lmmlSourceFileName = lastStr("/", lmmlSourcesDownloadUrl).replace("?dl=1", "");
+                maidGradleExtension
+                        .download(lmmlSourcesDownloadUrl)
+                        .progress(new GradleDownloadProgressListener("LittleMaidModelLoader Sources", progressGroup::createProgressLogger))
+                        .downloadPathAsync(maidGradleExtension.getLMMLOutputDirectory().get().file(lmmlSourceFileName).getAsFile().toPath(), executor);
+            }
+            project.getLogger().lifecycle("Current LittleMaidReBirth version: {}", maidGradleExtension.getLittleMaidReBirthVersion().get());
+
+            String lmrbVersion = maidGradleExtension.getLittleMaidReBirthVersion().get();
+            String lmrbDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(minecraftVersion, lmrbVersion);
+            String lmrbFileName = lastStr("/", lmrbDownloadUrl).replace("?dl=1", "");
+            maidGradleExtension
+                    .download(lmrbDownloadUrl)
+                    .progress(new GradleDownloadProgressListener("LittleMaidReBirth", progressGroup::createProgressLogger))
+                    .downloadPathAsync(maidGradleExtension.getLMRBOutputDirectory().get().file(lmrbFileName).getAsFile().toPath(), executor);
+
+            String lmrbDevDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMRBDevDownloadUrl(minecraftVersion, lmrbVersion);
+            if (lmrbDevDownloadUrl != null){
+                String lmrbDevFileName = lastStr("/", lmrbDevDownloadUrl).replace("?dl=1", "");
+                maidGradleExtension
+                        .download(lmrbDevDownloadUrl)
+                        .progress(new GradleDownloadProgressListener("LittleMaidReBirth Dev", progressGroup::createProgressLogger))
+                        .downloadPathAsync(maidGradleExtension.getLMRBOutputDirectory().get().file(lmrbDevFileName).getAsFile().toPath(), executor);
+            }
+
+            String lmrbSourceDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMRBSourceDownloadUrl(minecraftVersion, lmrbVersion);
+            if (lmrbSourceDownloadUrl != null){
+                String lmrbSourceFileName = lastStr("/", lmrbSourceDownloadUrl).replace("?dl=1", "");
+                maidGradleExtension
+                        .download(lmrbSourceDownloadUrl)
+                        .progress(new GradleDownloadProgressListener("LittleMaidReBirth Dev", progressGroup::createProgressLogger))
+                        .downloadPathAsync(maidGradleExtension.getLMRBOutputDirectory().get().file(lmrbSourceFileName).getAsFile().toPath(), executor);
+            }
+        }
+        project.getLogger().lifecycle(":Done!");
+    }
+    
     @Override
     public void apply(PluginAware pluginAware) {
         if (pluginAware instanceof Project project) {
@@ -72,6 +144,11 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             } catch (DownloadException e) {
                 throw new RuntimeException(e);
             }
+            try {
+                downloadJars(project, maidGradleExtension);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             //Add LittleMaid libraries directory
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
                         flatDirectoryArtifactRepository.dir(lmmlOutputDir.replace(projectDir, ""));
@@ -81,11 +158,11 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             afterEvaluationWithService(project, sharedServiceManager -> {
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
-                try {
+                /*try {
                     downloadLittleMaidJars.get().downloadJars();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
-                }
+                }*/
 
                 //Register configurations
                 project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, c -> {
@@ -163,7 +240,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
         try {
             Files.createFile(lock);
         } catch (IOException e) {
-            throw new UncheckedIOException("Failed to acquire getProject() configuration lock", e);
+            throw new UncheckedIOException("Failed to acquire project configuration lock", e);
         }
 
         return false;
@@ -185,7 +262,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 Files.move(lock, del);
                 Files.delete(del);
             } catch (IOException e2) {
-                var exception = new UncheckedIOException("Failed to release getProject() configuration lock", e2);
+                var exception = new UncheckedIOException("Failed to release project configuration lock", e2);
                 exception.addSuppressed(e1);
                 throw exception;
             }
