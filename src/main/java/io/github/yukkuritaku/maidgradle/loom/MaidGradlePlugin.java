@@ -59,22 +59,17 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             String lmmlOutputDir = maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getAbsolutePath().replace("\\", "/");
             String lmrbOutputDir = maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getAbsolutePath().replace("\\", "/");
             try {
-                project.getLogger().info("read littlemaid-modelloader-url.json from github");
+                project.getLogger().lifecycle("read littlemaid-modelloader-url.json from github");
                 String lmmlJson = maidGradleExtension
                         .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-json-data/littlemaid-modelloader-url.json")
                         .downloadString();
                 MaidConstants.LittleMaidJarFileUrls.setLmmlJarUrlMapping(GSON.fromJson(lmmlJson, new TypeToken<>(){}));
-                project.getLogger().info("read littlemaid-rebirth-url.json from github");
+                project.getLogger().lifecycle("read littlemaid-rebirth-url.json from github");
                 String lmrbJson = maidGradleExtension
                         .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-json-data/littlemaid-rebirth-url.json")
                         .downloadString();
                 MaidConstants.LittleMaidJarFileUrls.setLmrbJarUrlMapping(GSON.fromJson(lmrbJson, new TypeToken<>(){}));
             } catch (DownloadException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                downloadLittleMaidJars.get().downloadJars();
-            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             //Add LittleMaid libraries directory
@@ -86,6 +81,11 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             afterEvaluationWithService(project, sharedServiceManager -> {
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
+                try {
+                    downloadLittleMaidJars.get().downloadJars();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
                 //Register configurations
                 project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, c -> {
