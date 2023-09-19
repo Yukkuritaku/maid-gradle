@@ -125,19 +125,33 @@ public final class MaidConstants {
 
         public static String getLittleMaidModelLoader(Project project){
             final MaidGradleExtension maidGradleExtension = project.getExtensions().getByType(MaidGradleExtension.class);
+            String minecraftVersion = maidGradleExtension.getMinecraftVersion().get();
+            String lmmlVersion = maidGradleExtension.getLittleMaidModelLoaderVersion().get();
+            String lmmlDownloadUrl = LittleMaidJarFileUrls.getLMMLDownloadUrl(minecraftVersion, lmmlVersion);
+            boolean isFaArc = lmmlDownloadUrl.contains("Fa-Arc");
+            String libName = LITTLE_MAID_MODEL_LOADER +
+                    (isFaArc ? "-Fa-Arc-" : "-") + minecraftVersion + "-" + lmmlVersion + (isFaArc ? "" : "-Fabric");
+            if (minecraftVersion.equalsIgnoreCase("1.16.4") ||
+                    minecraftVersion.equalsIgnoreCase("1.16.3")){
+                libName = LITTLE_MAID_MODEL_LOADER + "-Fabric-" + minecraftVersion + "-" + lmmlVersion;
+            }
 
-            return LITTLE_MAID_MODEL_LOADER +
-                    "-" + maidGradleExtension.getMinecraftVersion().get() +
-                    "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
-                    "-Fabric";
+            return libName;
         }
 
         public static String getLittleMaidReBirth(Project project){
             final MaidGradleExtension maidGradleExtension = project.getExtensions().getByType(MaidGradleExtension.class);
-            return LITTLE_MAID_REBIRTH +
-                    "-" + maidGradleExtension.getMinecraftVersion().get() +
-                    "-" + maidGradleExtension.getLittleMaidReBirthVersion().get() +
-                    "-Fabric";
+            String minecraftVersion = maidGradleExtension.getMinecraftVersion().get();
+            String lmrbVersion = maidGradleExtension.getLittleMaidReBirthVersion().get();
+            String lmrbDownloadUrl = LittleMaidJarFileUrls.getLMRBDownloadUrl(minecraftVersion, lmrbVersion);
+            boolean isFaArc = lmrbDownloadUrl.contains("Fa-Arc");
+            String libName = LITTLE_MAID_REBIRTH +
+                    (isFaArc ? "-Fa-Arc-" : "-") + minecraftVersion + "-" + lmrbVersion + (isFaArc ? "" : "-Fabric");
+            if (minecraftVersion.equalsIgnoreCase("1.16.4") ||
+                    minecraftVersion.equalsIgnoreCase("1.16.3")){
+                libName = LITTLE_MAID_REBIRTH + "-Fabric-" + minecraftVersion + "-" + lmrbVersion;
+            }
+            return libName;
         }
     }
 
