@@ -6,7 +6,7 @@ plugins {
 
 group = 'io.github.yukkuritaku'
 def archiveName = 'maid-gradle'
-version = '0.4'
+version = '0.6'
 
 configurations {
     loom
