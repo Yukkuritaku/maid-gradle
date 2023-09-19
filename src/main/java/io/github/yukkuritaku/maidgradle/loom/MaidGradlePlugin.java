@@ -1,5 +1,7 @@
 package io.github.yukkuritaku.maidgradle.loom;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
@@ -9,6 +11,7 @@ import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.configuration.LoomDependencyManager;
 import net.fabricmc.loom.util.Checksum;
+import net.fabricmc.loom.util.download.DownloadException;
 import net.fabricmc.loom.util.gradle.GradleUtils;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import net.fabricmc.loom.util.service.ScopedSharedServiceManager;
@@ -16,6 +19,7 @@ import net.fabricmc.loom.util.service.SharedServiceManager;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.internal.impldep.io.usethesource.capsule.Map;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -25,6 +29,9 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public class MaidGradlePlugin implements BootstrappedPlugin {
+
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
 
     public static final String MAID_GRADLE_VERSION = Objects.requireNonNullElse(MaidGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
 
@@ -46,6 +53,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 downloadLittleMaidJarTask.getMinecraftVersion().set(maidGradleExtension.getMinecraftVersion());
                 downloadLittleMaidJarTask.getLittleMaidModelLoaderVersion().set(maidGradleExtension.getLittleMaidModelLoaderVersion());
                 downloadLittleMaidJarTask.getLittleMaidReBirthVersion().set(maidGradleExtension.getLittleMaidReBirthVersion());
+                downloadLittleMaidJarTask.getDownloadThreads().set(Math.min(Runtime.getRuntime().availableProcessors(), 10));
             });
             //Add LittleMaid libraries directory
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
@@ -58,8 +66,21 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                     }
             ));
             afterEvaluationWithService(project, sharedServiceManager -> {
-                project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
+                project.getLogger().lifecycle(":setting up littlemaid dependencies");
+                try {
+                    String lmmlJson = maidGradleExtension
+                            .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-modelloader-url.json")
+                            .downloadString();
+                    MaidConstants.LittleMaidJarFileUrls.setLmmlJarUrlMapping(GSON.fromJson(lmmlJson, Map.class));
+                    String lmrbJson = maidGradleExtension
+                            .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-rebirth-url.json")
+                            .downloadString();
+                    MaidConstants.LittleMaidJarFileUrls.setLmrbJarUrlMapping(GSON.fromJson(lmrbJson, Map.class));
+                } catch (DownloadException e) {
+                    throw new RuntimeException(e);
+                }
+
                 //Register configurations
                 project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, c -> {
                     c.setCanBeConsumed(false);
@@ -71,13 +92,15 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 });
                 extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
                 extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
+                //modApiと同じ
                 extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, remapConfigurationSettings -> {
                     remapConfigurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(project));
                     remapConfigurationSettings.getTargetConfigurationName().convention(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
                     remapConfigurationSettings.getOnCompileClasspath().convention(true);
                     remapConfigurationSettings.getOnRuntimeClasspath().convention(true);
-                    remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY);
+                    remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.COMPILE_AND_RUNTIME);
                 });
+                //modImplementationと同じ
                 extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, remapConfigurationSettings -> {
                     remapConfigurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(project));
                     remapConfigurationSettings.getTargetConfigurationName().convention(MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
@@ -96,19 +119,24 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
-                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidReBirth(project));
-
+                //devファイルはどうやってfabricに入れればいいのかわからん
+                //今の所はremapされたjarをプロジェクトに入れるようにする
+                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
+                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
                 LoomDependencyManager dependencyManager = new LoomDependencyManager();
                 extension.setDependencyManager(dependencyManager);
                 dependencyManager.handleDependencies(project, sharedServiceManager);
                 releaseLock(project);
                 extension.setRefreshDeps(previousRefreshDeps);
-                /*extension.getRunConfigs().stream().forEach(
+                extension.getRuns().forEach(
                         runConfigSettings -> {
-                            runConfigSettings.properties(Map.of());
+                            runConfigSettings.property("lmmd.dev.classes",
+                                    SourceSetHelper.getMainSourceSet(project).getOutput().getClassesDirs().getAsPath());
+                            runConfigSettings.property("lmmd.dev.resources",
+                                    SourceSetHelper.getMainSourceSet(project).getOutput().getResourcesDir().getAbsolutePath());
+
                         }
-                );*/
+                );
             });
         }
     }

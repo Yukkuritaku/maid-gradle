@@ -116,7 +116,16 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      */
     public abstract DirectoryProperty getLMRBOutputDirectory();
 
+    /**
+     * Returns the value of Current ReadMe file name and location.
+     * @return Current ReadMe file location, default file name is LittleMaidModel_ReadMe.txt
+     */
     public abstract Property<String> getReadMeFile();
+
+    /**
+     * Set the value of ReadMe file name.
+     * @param readMeFile ReadMe file name
+     */
 
     public void readMeFile(String readMeFile){
         getReadMeFile().set(readMeFile);
