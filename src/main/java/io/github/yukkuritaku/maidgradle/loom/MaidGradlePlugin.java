@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -54,26 +53,28 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 downloadLittleMaidJarTask.getMinecraftVersion().set(maidGradleExtension.getMinecraftVersion());
                 downloadLittleMaidJarTask.getLittleMaidModelLoaderVersion().set(maidGradleExtension.getLittleMaidModelLoaderVersion());
                 downloadLittleMaidJarTask.getLittleMaidReBirthVersion().set(maidGradleExtension.getLittleMaidReBirthVersion());
-                downloadLittleMaidJarTask.getDownloadThreads().set(Math.min(Runtime.getRuntime().availableProcessors(), 10));
+                downloadLittleMaidJarTask.getDownloadThreads().set(Math.min(Runtime.getRuntime().availableProcessors(), 6));
             });
+            String projectDir = project.getLayout().getProjectDirectory().getAsFile().getAbsolutePath().replace("\\", "/") + "/";
+            String lmmlOutputDir = maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getAbsolutePath().replace("\\", "/");
+            String lmrbOutputDir = maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getAbsolutePath().replace("\\", "/");
+
             //Add LittleMaid libraries directory
             project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
-                        flatDirectoryArtifactRepository.dir(
-                                "build/" + maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getName()
-                        );
-                        flatDirectoryArtifactRepository.dir(
-                                "build/" + maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getName()
-                        );
+                        flatDirectoryArtifactRepository.dir(lmmlOutputDir.replace(projectDir, ""));
+                        flatDirectoryArtifactRepository.dir(lmrbOutputDir.replace(projectDir, ""));
                     }
             ));
             afterEvaluationWithService(project, sharedServiceManager -> {
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 try {
+                    project.getLogger().info("read littlemaid-modelloader-url.json from github");
                     String lmmlJson = maidGradleExtension
                             .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-json-data/littlemaid-modelloader-url.json")
                             .downloadString();
                     MaidConstants.LittleMaidJarFileUrls.setLmmlJarUrlMapping(GSON.fromJson(lmmlJson, new TypeToken<>(){}));
+                    project.getLogger().info("read littlemaid-rebirth-url.json from github");
                     String lmrbJson = maidGradleExtension
                             .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-json-data/littlemaid-rebirth-url.json")
                             .downloadString();

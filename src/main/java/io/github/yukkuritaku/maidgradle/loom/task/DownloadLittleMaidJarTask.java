@@ -8,13 +8,14 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 
+import javax.inject.Inject;
 import java.io.IOException;
 
 public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
 
+    @Inject
     public DownloadLittleMaidJarTask() {
         super();
-        setGroup(MaidConstants.MAID_GRADLE);
     }
 
     @Input public abstract Property<String> getMinecraftVersion();

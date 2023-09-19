@@ -126,7 +126,6 @@ public abstract class MaidGradleExtension extends GroovyObjectSupport{
      * Set the value of ReadMe file name.
      * @param readMeFile ReadMe file name
      */
-
     public void readMeFile(String readMeFile){
         getReadMeFile().set(readMeFile);
     }

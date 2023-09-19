@@ -10,6 +10,7 @@ public abstract class AbstractMaidTask extends DefaultTask {
     public AbstractMaidTask(){
         setGroup(MaidConstants.MAID_GRADLE);
     }
+
     @Internal
     protected MaidGradleExtension getMaidExtension() {
         return getProject().getExtensions().getByType(MaidGradleExtension.class);
