@@ -2,6 +2,7 @@ package io.github.yukkuritaku.maidgradle.loom;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
@@ -70,13 +71,13 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 try {
                     String lmmlJson = maidGradleExtension
-                            .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-modelloader-url.json")
+                            .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-json-data/littlemaid-modelloader-url.json")
                             .downloadString();
-                    MaidConstants.LittleMaidJarFileUrls.setLmmlJarUrlMapping(GSON.fromJson(lmmlJson, Map.class));
+                    MaidConstants.LittleMaidJarFileUrls.setLmmlJarUrlMapping(GSON.fromJson(lmmlJson, new TypeToken<>(){}));
                     String lmrbJson = maidGradleExtension
-                            .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-rebirth-url.json")
+                            .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-json-data/littlemaid-rebirth-url.json")
                             .downloadString();
-                    MaidConstants.LittleMaidJarFileUrls.setLmrbJarUrlMapping(GSON.fromJson(lmrbJson, Map.class));
+                    MaidConstants.LittleMaidJarFileUrls.setLmrbJarUrlMapping(GSON.fromJson(lmrbJson, new TypeToken<>(){}));
                 } catch (DownloadException e) {
                     throw new RuntimeException(e);
                 }

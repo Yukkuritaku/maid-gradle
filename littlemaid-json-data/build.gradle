@@ -18,4 +18,10 @@ tasks.withType(JavaCompile).configureEach {
     it.options.encoding = 'UTF-8'
 }
 
+tasks.register("generateJson", JavaExec){
+    setGroup("littlemaidjsondata")
+    mainClass = "io.github.yukkuritaku.lmjsondata.Main"
+    classpath sourceSets.main.runtimeClasspath
+}
+
 
