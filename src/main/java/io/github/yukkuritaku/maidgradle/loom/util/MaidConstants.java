@@ -11,7 +11,7 @@ import java.util.Map;
 public final class MaidConstants {
 
     public static final String MAID_GRADLE = "maidgradle";
-    public static final String VERSION = "0.1";
+    public static final String VERSION = "0.5";
 
     public static class LittleMaidJarFileUrls{
 
@@ -125,6 +125,7 @@ public final class MaidConstants {
 
         public static String getLittleMaidModelLoader(Project project){
             final MaidGradleExtension maidGradleExtension = project.getExtensions().getByType(MaidGradleExtension.class);
+
             return LITTLE_MAID_MODEL_LOADER +
                     "-" + maidGradleExtension.getMinecraftVersion().get() +
                     "-" + maidGradleExtension.getLittleMaidModelLoaderVersion().get() +
