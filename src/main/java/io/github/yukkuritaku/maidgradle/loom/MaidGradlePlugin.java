@@ -19,12 +19,12 @@ import net.fabricmc.loom.util.service.SharedServiceManager;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
-import org.gradle.internal.impldep.io.usethesource.capsule.Map;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
