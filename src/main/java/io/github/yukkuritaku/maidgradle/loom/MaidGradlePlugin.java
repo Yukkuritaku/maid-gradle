@@ -40,6 +40,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
         if (pluginAware instanceof Project project) {
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             final MaidGradleExtension maidGradleExtension = project.getExtensions().create("maidgradle", MaidGradleExtension.class, project);
+            final LoomGradleExtension extension = LoomGradleExtension.get(project);
             final TaskContainer tasks = project.getTasks();
             //Tasks
             tasks.register("buildLittleMaidModel", BuildLittleMaidModelTask.class, task -> {
@@ -84,44 +85,41 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         flatDirectoryArtifactRepository.dir(lmrbOutputDir.replace(projectDir, ""));
                     }
             ));
-            project.getLogger().lifecycle("hasPlugin: {}", project.getPlugins().hasPlugin("fabric-loom"));
+            //Register configurations
+            project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, c -> {
+                c.setCanBeConsumed(false);
+                c.setCanBeResolved(true);
+            });
+            project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_REBIRTH, c -> {
+                c.setCanBeConsumed(false);
+                c.setCanBeResolved(true);
+            });
+            extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
+            extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
+            //modApiと同じ
+            extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, remapConfigurationSettings -> {
+                remapConfigurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(project));
+                remapConfigurationSettings.getTargetConfigurationName().convention(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
+                remapConfigurationSettings.getOnCompileClasspath().convention(true);
+                remapConfigurationSettings.getOnRuntimeClasspath().convention(true);
+                remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.COMPILE_AND_RUNTIME);
+            });
+            //modImplementationと同じ
+            extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, remapConfigurationSettings -> {
+                remapConfigurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(project));
+                remapConfigurationSettings.getTargetConfigurationName().convention(MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
+                remapConfigurationSettings.getOnCompileClasspath().convention(true);
+                remapConfigurationSettings.getOnRuntimeClasspath().convention(true);
+                remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY);
+            });
+
             afterEvaluationWithService(project, sharedServiceManager -> {
-                project.getLogger().lifecycle("hasPlugin: {}", project.getPlugins().hasPlugin("fabric-loom"));
-                final LoomGradleExtension extension = LoomGradleExtension.get(project);
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 try {
                     downloadLittleMaidJars.get().downloadJars();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                //Register configurations
-                project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, c -> {
-                    c.setCanBeConsumed(false);
-                    c.setCanBeResolved(true);
-                });
-                project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_REBIRTH, c -> {
-                    c.setCanBeConsumed(false);
-                    c.setCanBeResolved(true);
-                });
-                extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
-                extendsFrom(project, SourceSetHelper.getMainSourceSet(project).getImplementationConfigurationName(), MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
-                //modApiと同じ
-                extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, remapConfigurationSettings -> {
-                    remapConfigurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(project));
-                    remapConfigurationSettings.getTargetConfigurationName().convention(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER);
-                    remapConfigurationSettings.getOnCompileClasspath().convention(true);
-                    remapConfigurationSettings.getOnRuntimeClasspath().convention(true);
-                    remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.COMPILE_AND_RUNTIME);
-                });
-                //modImplementationと同じ
-                extension.addRemapConfiguration(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, remapConfigurationSettings -> {
-                    remapConfigurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(project));
-                    remapConfigurationSettings.getTargetConfigurationName().convention(MaidConstants.Configurations.LITTLE_MAID_REBIRTH);
-                    remapConfigurationSettings.getOnCompileClasspath().convention(true);
-                    remapConfigurationSettings.getOnRuntimeClasspath().convention(true);
-                    remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY);
-                });
-
                 final boolean previousRefreshDeps = extension.refreshDeps();
                 if (getAndLock(project)) {
                     project.getLogger().lifecycle("Found existing cache lock file, rebuilding loom cache. This may have been caused by a failed or canceled build.");
