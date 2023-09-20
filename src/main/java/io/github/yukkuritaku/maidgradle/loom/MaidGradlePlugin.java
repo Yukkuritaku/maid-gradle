@@ -79,6 +79,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                     }
             ));
             afterEvaluationWithService(project, sharedServiceManager -> {
+                project.getLogger().lifecycle("hasPlugin: {}", project.getPlugins().hasPlugin("fabric-loom"));
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 try {
