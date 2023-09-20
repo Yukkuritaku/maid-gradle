@@ -40,7 +40,7 @@ pluginManagement {
 plugins{
     id 'fabric-loom' version '1.3-SNAPSHOT'
     //適用するにはfabric-loomの下に設定する必要があります。
-    id 'io.github.yukkuritaku.maid-gradle' version '使いたいバージョン'
+    id 'io.github.yukkuritaku.maid-gradle'
     id 'maven-publish'
 }
 
