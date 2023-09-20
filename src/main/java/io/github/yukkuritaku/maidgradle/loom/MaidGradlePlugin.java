@@ -113,6 +113,12 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 remapConfigurationSettings.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY);
             });
 
+
+            //devファイルはどうやってfabricに入れればいいのかわからん
+            //今の所はremapされたjarをプロジェクトに入れるようにする
+            project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
+            project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
+
             afterEvaluationWithService(project, sharedServiceManager -> {
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
                 try {
@@ -125,10 +131,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                     project.getLogger().lifecycle("Found existing cache lock file, rebuilding loom cache. This may have been caused by a failed or canceled build.");
                     extension.setRefreshDeps(true);
                 }
-                //devファイルはどうやってfabricに入れればいいのかわからん
-                //今の所はremapされたjarをプロジェクトに入れるようにする
-                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
-                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
                 LoomDependencyManager dependencyManager = new LoomDependencyManager();
                 extension.setDependencyManager(dependencyManager);
                 dependencyManager.handleDependencies(project, sharedServiceManager);
