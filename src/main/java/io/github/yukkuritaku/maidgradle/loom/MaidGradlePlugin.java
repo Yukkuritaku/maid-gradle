@@ -72,6 +72,19 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             } catch (DownloadException e) {
                 throw new RuntimeException(e);
             }
+            if (!maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().exists()){
+                maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().mkdir();
+            }
+            if (!maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().exists()){
+                maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().mkdir();
+            }
+            //Add LittleMaid libraries directory
+            project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
+                        flatDirectoryArtifactRepository.dir(lmmlOutputDir.replace(projectDir, ""));
+                        flatDirectoryArtifactRepository.dir(lmrbOutputDir.replace(projectDir, ""));
+                    }
+            ));
+            project.getLogger().lifecycle("hasPlugin: {}", project.getPlugins().hasPlugin("fabric-loom"));
             afterEvaluationWithService(project, sharedServiceManager -> {
                 project.getLogger().lifecycle("hasPlugin: {}", project.getPlugins().hasPlugin("fabric-loom"));
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
@@ -81,12 +94,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                //Add LittleMaid libraries directory
-                project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
-                            flatDirectoryArtifactRepository.dir(lmmlOutputDir.replace(projectDir, ""));
-                            flatDirectoryArtifactRepository.dir(lmrbOutputDir.replace(projectDir, ""));
-                        }
-                ));
                 //Register configurations
                 project.getConfigurations().register(MaidConstants.Configurations.LITTLE_MAID_MODEL_LOADER, c -> {
                     c.setCanBeConsumed(false);
