@@ -3,24 +3,14 @@ package io.github.yukkuritaku.maidgradle.loom;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import io.github.yukkuritaku.maidgradle.loom.configuration.MaidCompileConfiguration;
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.LoomGradlePlugin;
 import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
-import net.fabricmc.loom.configuration.CompileConfiguration;
-import net.fabricmc.loom.configuration.LoomConfigurations;
 import net.fabricmc.loom.configuration.LoomDependencyManager;
-import net.fabricmc.loom.configuration.MavenPublication;
-import net.fabricmc.loom.configuration.ide.IdeConfiguration;
-import net.fabricmc.loom.configuration.ide.idea.IdeaConfiguration;
-import net.fabricmc.loom.decompilers.DecompilerConfiguration;
-import net.fabricmc.loom.task.LoomTasks;
-import net.fabricmc.loom.task.RemapTaskConfiguration;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.download.DownloadException;
 import net.fabricmc.loom.util.gradle.GradleUtils;
@@ -30,18 +20,11 @@ import net.fabricmc.loom.util.service.SharedServiceManager;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
-import sun.misc.Unsafe;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -56,25 +39,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
     public void apply(PluginAware pluginAware) {
         if (pluginAware instanceof Project project) {
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
-            try {
-                final Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
-                unsafeField.setAccessible(true);
-                final Unsafe unsafe = (Unsafe) unsafeField.get(null);
-                final Field setupJobs = LoomGradlePlugin.class.getDeclaredField("SETUP_JOBS");
-                final Object base = unsafe.staticFieldBase(setupJobs);
-                final long offset = unsafe.staticFieldOffset(setupJobs);
-                unsafe.putObject(base, offset, List.of(
-                        LoomConfigurations.class,
-                        MaidCompileConfiguration.class,
-                        MavenPublication.class,
-                        RemapTaskConfiguration.class,
-                        LoomTasks.class,
-                        DecompilerConfiguration.class,
-                        IdeaConfiguration.class,
-                        IdeConfiguration.class));
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
             final MaidGradleExtension maidGradleExtension = project.getExtensions().create("maidgradle", MaidGradleExtension.class, project);
             final TaskContainer tasks = project.getTasks();
             //Tasks
