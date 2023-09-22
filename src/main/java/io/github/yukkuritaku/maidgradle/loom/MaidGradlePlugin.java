@@ -56,10 +56,8 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 Class<?> loomGradlePluginClass = Class.forName("net.fabricmc.loom.LoomGradlePlugin");
                 Field field = loomGradlePluginClass.getDeclaredField("SETUP_JOBS");
                 field.setAccessible(true);
-                field.setInt(field,
-                        field.getModifiers() & ~Modifier.PRIVATE & ~Modifier.FINAL);
                 //List<Class<? extends Runnable>> setup_jobs = (List<Class<? extends Runnable>>) field.get(List.class);
-                field.set(field, List.of(
+                field.set(null, List.of(
                         LoomConfigurations.class,
                         MaidCompileConfiguration.class,
                         MavenPublication.class,
