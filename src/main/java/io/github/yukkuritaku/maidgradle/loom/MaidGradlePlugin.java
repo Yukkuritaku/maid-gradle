@@ -12,7 +12,14 @@ import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.configuration.CompileConfiguration;
+import net.fabricmc.loom.configuration.LoomConfigurations;
 import net.fabricmc.loom.configuration.LoomDependencyManager;
+import net.fabricmc.loom.configuration.MavenPublication;
+import net.fabricmc.loom.configuration.ide.IdeConfiguration;
+import net.fabricmc.loom.configuration.ide.idea.IdeaConfiguration;
+import net.fabricmc.loom.decompilers.DecompilerConfiguration;
+import net.fabricmc.loom.task.LoomTasks;
+import net.fabricmc.loom.task.RemapTaskConfiguration;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.download.DownloadException;
 import net.fabricmc.loom.util.gradle.GradleUtils;
@@ -48,9 +55,17 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 Class<?> loomGradlePluginClass = Class.forName("net.fabricmc.loom.LoomGradlePlugin");
                 Field field = loomGradlePluginClass.getDeclaredField("SETUP_JOBS");
                 field.setAccessible(true);
-                List<Class<? extends Runnable>> setup_jobs = (List<Class<? extends Runnable>>) field.get(List.class);
-                setup_jobs.add(1, MaidCompileConfiguration.class);
-                setup_jobs.removeIf(clazz -> CompileConfiguration.class == clazz.getDeclaringClass());
+                //List<Class<? extends Runnable>> setup_jobs = (List<Class<? extends Runnable>>) field.get(List.class);
+                field.set(field, List.of(
+                        LoomConfigurations.class,
+                        MaidCompileConfiguration.class,
+                        MavenPublication.class,
+                        RemapTaskConfiguration.class,
+                        LoomTasks.class,
+                        DecompilerConfiguration.class,
+                        IdeaConfiguration.class,
+                        IdeConfiguration.class));
+                //setup_jobs.removeIf(clazz -> CompileConfiguration.class == clazz.getDeclaringClass());
             } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
