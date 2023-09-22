@@ -49,6 +49,7 @@ public abstract class MaidCompileConfiguration extends CompileConfiguration {
                     extension.setRefreshDeps(true);
                 }
                 try {
+                    setupMinecraft.setAccessible(true);
                     setupMinecraft.invoke(compileConfigurationClass, configContext);
                 } catch (Exception e) {
                     throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to setup Minecraft", e);
@@ -86,6 +87,7 @@ public abstract class MaidCompileConfiguration extends CompileConfiguration {
 
     private Object tryInvoke(Method method, Class<?> callingClass, Object... args) {
         try {
+            method.setAccessible(true);
             return method.invoke(callingClass, args);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
