@@ -3,6 +3,7 @@ package io.github.yukkuritaku.maidgradle.loom;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import io.github.yukkuritaku.maidgradle.loom.configuration.MaidCompileConfiguration;
 import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
@@ -10,6 +11,7 @@ import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
+import net.fabricmc.loom.configuration.CompileConfiguration;
 import net.fabricmc.loom.configuration.LoomDependencyManager;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.download.DownloadException;
@@ -23,8 +25,11 @@ import org.gradle.api.tasks.TaskContainer;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -39,6 +44,15 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
     public void apply(PluginAware pluginAware) {
         if (pluginAware instanceof Project project) {
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
+            try {
+                Class<?> loomGradlePluginClass = Class.forName("net.fabricmc.loom.LoomGradlePlugin");
+                Field field = loomGradlePluginClass.getDeclaredField("SETUP_JOBS");
+                List<Class<? extends Runnable>> setup_jobs = (List<Class<? extends Runnable>>) field.get(List.class);
+                setup_jobs.add(1, MaidCompileConfiguration.class);
+                setup_jobs.removeIf(clazz -> CompileConfiguration.class == clazz.getDeclaringClass());
+            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
             final MaidGradleExtension maidGradleExtension = project.getExtensions().create("maidgradle", MaidGradleExtension.class, project);
             final TaskContainer tasks = project.getTasks();
             //Tasks
