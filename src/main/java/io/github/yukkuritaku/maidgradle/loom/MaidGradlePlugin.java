@@ -72,16 +72,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         DecompilerConfiguration.class,
                         IdeaConfiguration.class,
                         IdeConfiguration.class));
-                /*Field field = loomGradlePluginClass.getDeclaredField("SETUP_JOBS");
-                setStaticFinal(field, List.of(
-                        LoomConfigurations.class,
-                        MaidCompileConfiguration.class,
-                        MavenPublication.class,
-                        RemapTaskConfiguration.class,
-                        LoomTasks.class,
-                        DecompilerConfiguration.class,
-                        IdeaConfiguration.class,
-                        IdeConfiguration.class));*/
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
