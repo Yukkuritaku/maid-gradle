@@ -33,6 +33,7 @@ import org.gradle.api.tasks.TaskContainer;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -55,6 +56,8 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 Class<?> loomGradlePluginClass = Class.forName("net.fabricmc.loom.LoomGradlePlugin");
                 Field field = loomGradlePluginClass.getDeclaredField("SETUP_JOBS");
                 field.setAccessible(true);
+                field.setInt(field,
+                        field.getModifiers() & ~Modifier.PRIVATE & ~Modifier.FINAL);
                 //List<Class<? extends Runnable>> setup_jobs = (List<Class<? extends Runnable>>) field.get(List.class);
                 field.set(field, List.of(
                         LoomConfigurations.class,
