@@ -29,9 +29,12 @@ import net.fabricmc.loom.util.service.SharedServiceManager;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
+import sun.misc.Unsafe;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -48,6 +51,13 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
 
     public static final String MAID_GRADLE_VERSION = Objects.requireNonNullElse(MaidGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
 
+    private static void setStaticFinal(Field field, Object newValue) throws NoSuchFieldException, IllegalAccessException {
+        field.setAccessible(true);
+        Field modifiers = Field.class.getDeclaredField("modifiers");
+        modifiers.setAccessible(true);
+        modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(null, newValue);
+    }
     @Override
     public void apply(PluginAware pluginAware) {
         if (pluginAware instanceof Project project) {
@@ -55,9 +65,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             try {
                 Class<?> loomGradlePluginClass = Class.forName("net.fabricmc.loom.LoomGradlePlugin");
                 Field field = loomGradlePluginClass.getDeclaredField("SETUP_JOBS");
-                field.setAccessible(true);
-                //List<Class<? extends Runnable>> setup_jobs = (List<Class<? extends Runnable>>) field.get(List.class);
-                field.set(null, List.of(
+                setStaticFinal(field, List.of(
                         LoomConfigurations.class,
                         MaidCompileConfiguration.class,
                         MavenPublication.class,
@@ -66,7 +74,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         DecompilerConfiguration.class,
                         IdeaConfiguration.class,
                         IdeConfiguration.class));
-                //setup_jobs.removeIf(clazz -> CompileConfiguration.class == clazz.getDeclaringClass());
             } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

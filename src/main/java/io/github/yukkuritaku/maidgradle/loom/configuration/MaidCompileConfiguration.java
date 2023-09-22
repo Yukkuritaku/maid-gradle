@@ -55,6 +55,7 @@ public abstract class MaidCompileConfiguration extends CompileConfiguration {
                     throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to setup Minecraft", e);
                 }
                 tryInvoke(releaseLock, compileConfigurationClass);
+                extension.setRefreshDeps(previousRefreshDeps);
 
                 MixinExtension mixin = LoomGradleExtension.get(getProject()).getMixin();
 
