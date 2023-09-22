@@ -9,6 +9,7 @@ import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.LoomGradlePlugin;
 import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.configuration.CompileConfiguration;
@@ -51,21 +52,18 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
 
     public static final String MAID_GRADLE_VERSION = Objects.requireNonNullElse(MaidGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
 
-    private static void setStaticFinal(Field field, Object newValue) throws NoSuchFieldException, IllegalAccessException {
-        field.setAccessible(true);
-        Field modifiers = Field.class.getDeclaredField("modifiers");
-        modifiers.setAccessible(true);
-        modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        field.set(null, newValue);
-    }
     @Override
     public void apply(PluginAware pluginAware) {
         if (pluginAware instanceof Project project) {
             project.getLogger().lifecycle("Maid Gradle: {}", MAID_GRADLE_VERSION);
             try {
-                Class<?> loomGradlePluginClass = Class.forName("net.fabricmc.loom.LoomGradlePlugin");
-                Field field = loomGradlePluginClass.getDeclaredField("SETUP_JOBS");
-                setStaticFinal(field, List.of(
+                final Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+                unsafeField.setAccessible(true);
+                final Unsafe unsafe = (Unsafe) unsafeField.get(null);
+                final Field setupJobs = LoomGradlePlugin.class.getDeclaredField("SETUP_JOBS");
+                final Object base = unsafe.staticFieldBase(setupJobs);
+                final long offset = unsafe.staticFieldOffset(setupJobs);
+                unsafe.putObject(base, offset, List.of(
                         LoomConfigurations.class,
                         MaidCompileConfiguration.class,
                         MavenPublication.class,
@@ -74,7 +72,17 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                         DecompilerConfiguration.class,
                         IdeaConfiguration.class,
                         IdeConfiguration.class));
-            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+                /*Field field = loomGradlePluginClass.getDeclaredField("SETUP_JOBS");
+                setStaticFinal(field, List.of(
+                        LoomConfigurations.class,
+                        MaidCompileConfiguration.class,
+                        MavenPublication.class,
+                        RemapTaskConfiguration.class,
+                        LoomTasks.class,
+                        DecompilerConfiguration.class,
+                        IdeaConfiguration.class,
+                        IdeConfiguration.class));*/
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
             final MaidGradleExtension maidGradleExtension = project.getExtensions().create("maidgradle", MaidGradleExtension.class, project);
