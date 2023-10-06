@@ -19,6 +19,7 @@ import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import net.fabricmc.loom.util.service.ScopedSharedServiceManager;
 import net.fabricmc.loom.util.service.SharedServiceManager;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
 
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -80,12 +82,6 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             if (!maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().exists()){
                 maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().mkdir();
             }
-            //Add LittleMaid libraries directory
-            project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
-                        flatDirectoryArtifactRepository.dir(lmmlOutputDir.replace(projectDir, ""));
-                        flatDirectoryArtifactRepository.dir(lmrbOutputDir.replace(projectDir, ""));
-                    }
-            ));
             afterEvaluationWithService(project, sharedServiceManager -> {
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
@@ -128,10 +124,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 }
                 //devファイルはどうやってfabricに入れればいいのかわからん
                 //今の所はremapされたjarをプロジェクトに入れるようにする
-
                 try {
-                    //project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
-                    //project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
                     String lmmlFileName = Utils.lastStr("/", Objects.requireNonNull(MaidConstants.LittleMaidJarFileUrls
                                     .getLMMLDownloadUrl(maidGradleExtension.getMinecraftVersion().get(),
                                             maidGradleExtension.getLittleMaidModelLoaderVersion().get())))
@@ -140,8 +133,26 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                                     .getLMRBDownloadUrl(maidGradleExtension.getMinecraftVersion().get(),
                                             maidGradleExtension.getLittleMaidReBirthVersion().get())))
                             .replace("?dl=1", "");
-                    project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, project.files(lmmlOutputDir.replace(projectDir, "") + "/" + lmmlFileName));
-                    project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, project.files(lmrbOutputDir.replace(projectDir, "") + "/" + lmrbFileName));
+                    File lmmlFile = null;
+                    File lmrbFile = null;
+                    try {
+                        if (!Files.notExists(project.file(lmmlOutputDir.replace(projectDir, "") + "/" + lmmlFileName).toPath())){
+                            Iterator<File> lmmlIterator = project.getConfigurations().detachedConfiguration(project.getDependencies().create(project.files(lmmlOutputDir.replace(projectDir, "") + "/" + lmmlFileName))).resolve().iterator();
+                            lmmlFile = lmmlIterator.hasNext() ? lmmlIterator.next() : null;
+                        }
+                        if (!Files.notExists(project.file(lmrbOutputDir.replace(projectDir, "") + "/" + lmrbFileName).toPath())){
+                            Iterator<File> lmrbIterator = project.getConfigurations().detachedConfiguration(project.getDependencies().create(project.files(lmrbOutputDir.replace(projectDir, "") + "/" + lmrbFileName))).resolve().iterator();
+                            lmrbFile = lmrbIterator.hasNext() ? lmrbIterator.next() : null;
+                        }
+                    }catch (Exception e){
+                        project.getLogger().error("Errored", e);
+                    }
+                    if (lmmlFile != null){
+                        project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, lmmlFile);
+                    }
+                    if (lmrbFile != null){
+                        project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, lmrbFile);
+                    }
                 } catch (Exception ignored){
 
                 }
