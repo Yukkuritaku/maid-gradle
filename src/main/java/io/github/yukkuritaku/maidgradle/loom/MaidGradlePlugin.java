@@ -67,19 +67,21 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 String lmmlJson = maidGradleExtension
                         .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-json-data/littlemaid-modelloader-url.json")
                         .downloadString();
-                MaidConstants.LittleMaidJarFileUrls.setLmmlJarUrlMapping(GSON.fromJson(lmmlJson, new TypeToken<>(){}));
+                MaidConstants.LittleMaidJarFileUrls.setLmmlJarUrlMapping(GSON.fromJson(lmmlJson, new TypeToken<>() {
+                }));
                 project.getLogger().lifecycle("read littlemaid-rebirth-url.json from github");
                 String lmrbJson = maidGradleExtension
                         .download("https://raw.githubusercontent.com/Yukkuritaku/maid-gradle/master/littlemaid-json-data/littlemaid-rebirth-url.json")
                         .downloadString();
-                MaidConstants.LittleMaidJarFileUrls.setLmrbJarUrlMapping(GSON.fromJson(lmrbJson, new TypeToken<>(){}));
+                MaidConstants.LittleMaidJarFileUrls.setLmrbJarUrlMapping(GSON.fromJson(lmrbJson, new TypeToken<>() {
+                }));
             } catch (DownloadException e) {
                 throw new RuntimeException(e);
             }
-            if (!maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().exists()){
+            if (!maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().exists()) {
                 maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().mkdir();
             }
-            if (!maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().exists()){
+            if (!maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().exists()) {
                 maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().mkdir();
             }
             afterEvaluationWithService(project, sharedServiceManager -> {
@@ -122,6 +124,11 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                     project.getLogger().lifecycle("Found existing cache lock file, rebuilding loom cache. This may have been caused by a failed or canceled build.");
                     extension.setRefreshDeps(true);
                 }
+                project.getRepositories().add(project.getRepositories().flatDir(flatDirectoryArtifactRepository -> {
+                            flatDirectoryArtifactRepository.dir(lmmlOutputDir.replace(projectDir, ""));
+                            flatDirectoryArtifactRepository.dir(lmrbOutputDir.replace(projectDir, ""));
+                        }
+                ));
                 //devファイルはどうやってfabricに入れればいいのかわからん
                 //今の所はremapされたjarをプロジェクトに入れるようにする
                 try {
@@ -133,28 +140,13 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                                     .getLMRBDownloadUrl(maidGradleExtension.getMinecraftVersion().get(),
                                             maidGradleExtension.getLittleMaidReBirthVersion().get())))
                             .replace("?dl=1", "");
-                    File lmmlFile = null;
-                    File lmrbFile = null;
-                    try {
-                        if (!Files.notExists(project.file(lmmlOutputDir.replace(projectDir, "") + "/" + lmmlFileName).toPath())){
-                            Iterator<File> lmmlIterator = project.getConfigurations().detachedConfiguration(project.getDependencies().create(project.files(lmmlOutputDir.replace(projectDir, "") + "/" + lmmlFileName))).resolve().iterator();
-                            lmmlFile = lmmlIterator.hasNext() ? lmmlIterator.next() : null;
-                        }
-                        if (!Files.notExists(project.file(lmrbOutputDir.replace(projectDir, "") + "/" + lmrbFileName).toPath())){
-                            Iterator<File> lmrbIterator = project.getConfigurations().detachedConfiguration(project.getDependencies().create(project.files(lmrbOutputDir.replace(projectDir, "") + "/" + lmrbFileName))).resolve().iterator();
-                            lmrbFile = lmrbIterator.hasNext() ? lmrbIterator.next() : null;
-                        }
-                    }catch (Exception e){
-                        project.getLogger().error("Errored", e);
+                    if (project.file(lmmlOutputDir + "/" + lmmlFileName).exists()) {
+                        project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
                     }
-                    if (lmmlFile != null){
-                        project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, lmmlFile);
+                    if (project.file(lmrbOutputDir + "/" + lmrbFileName).exists()) {
+                        project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
                     }
-                    if (lmrbFile != null){
-                        project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, lmrbFile);
-                    }
-                } catch (Exception ignored){
-
+                } catch (Exception ignored) {
                 }
                 LoomDependencyManager dependencyManager = new LoomDependencyManager();
                 extension.setDependencyManager(dependencyManager);
