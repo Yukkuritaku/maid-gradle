@@ -353,11 +353,11 @@ public class LmrbJarUrlMap {
                                     ),
                                     e("5.4.5",
                                             JarMetadata.create(
-                                                    "https://www.dropbox.com/sh/tzkdz46y67tuohx/AAB3N7VE-hTdCiKbMWLZKMpKa/LittleMaidReBirth/Fabric/1.19.2/LMRB-1.19.2-5.4.5-Fabric.jar",
-                                                    "https://www.dropbox.com/sh/tzkdz46y67tuohx/AABG_2ER28eH9jAbfe93_DNHa/LittleMaidReBirth/Fabric/1.19.2/LMRB-1.19.2-5.4.5-fabric-dev.jar",
-                                                    "https://www.dropbox.com/sh/tzkdz46y67tuohx/AADJQmvuKzsjqScrzneMRdq9a/LittleMaidReBirth/Fabric/1.19.2/LMRB-1.19.2-5.4.5-sources.jar"
-                                            ))
-                            )
+                                                    "https://www.dropbox.com/sh/tzkdz46y67tuohx/AAArYeKkAvzxn4nU9ayWOGs0a/LittleMaidReBirth/Fabric/1.19.2/old/LMRB-1.19.2-5.4.5-Fabric.jar",
+                                                    "https://www.dropbox.com/sh/tzkdz46y67tuohx/AADFxWAzgaUPDb7cBU_o3KG3a/LittleMaidReBirth/Fabric/1.19.2/old/LMRB-1.19.2-5.4.5-fabric-dev.jar",
+                                                    "https://www.dropbox.com/sh/tzkdz46y67tuohx/AADEeW0TjrYJjJcaf8RgX5uAa/LittleMaidReBirth/Fabric/1.19.2/old/LMRB-1.19.2-5.4.5-sources.jar")
+                                            ),
+                                    e("5.5.0", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACIyQZcEXkyYzgsKv_2XR_Za/LittleMaidReBirth/Fabric/1.19.2/LMRB-1.19.2-5.5.0-Fabric.jar")))
                     ),
                     e("1.19.3",
                             Map.of("6.0.0",
@@ -385,32 +385,63 @@ public class LmrbJarUrlMap {
                     e("1.19.4",
                             Map.of("7.0.0",
                                     JarMetadata.create(
-                                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AADjt20EGNfKfqH6AGVg4J9Ea/LittleMaidReBirth/Fabric/1.19.4/LMRB-1.19.4-7.0.0-Fabric.jar",
-                                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AABciTunwlPOEVYQYf8bazPla/LittleMaidReBirth/Fabric/1.19.4/LMRB-1.19.4-7.0.0-fabric-dev.jar",
-                                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AABLK9wHx5anBTa7JAa0RQ4ia/LittleMaidReBirth/Fabric/1.19.4/LMRB-1.19.4-7.0.0-sources.jar"
-                                    ))
+                                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AABeSrMcSLT4zFZoPINvF1Y9a/LittleMaidReBirth/Fabric/1.19.4/old/LMRB-1.19.4-7.0.0-Fabric.jar",
+                                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAC-Qjlot7dXpxU-TUJK7YHa/LittleMaidReBirth/Fabric/1.19.4/old/LMRB-1.19.4-7.0.0-fabric-dev.jar",
+                                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AABA042Ri1hnAd-MIHpavmwVa/LittleMaidReBirth/Fabric/1.19.4/old/LMRB-1.19.4-7.0.0-sources.jar"
+                                    ),
+                                    "7.1.0",
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AADYMpwaWETSKIffgRkEGN0Sa/LittleMaidReBirth/Fabric/1.19.4/LMRB-1.19.4-7.1.0-Fabric.jar"))
                     ),
                     e("1.20",
                             Map.of(
                                     "8.0.0",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACSZmDpwefpZaXtqZ7XFKkZa/LittleMaidReBirth/Fabric/1.20/old/LMRB-1.20.1-8.0.0-Fabric.jar"),
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABaiDs0fP8zHmuYTQmwYgX3a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.0-Fabric.jar"),
                                     "8.0.1",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACtUqp1xKeeB4hGQZ-edqdja/LittleMaidReBirth/Fabric/1.20/old/LMRB-1.20.1-8.0.1-Fabric.jar"),
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABBiAiRY_99UDkmDx3f1rq7a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.1-Fabric.jar"),
                                     "8.0.2",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABkONZHU_ufY30V-of4Ex1Ba/LittleMaidReBirth/Fabric/1.20/old/LMRB-1.20.1-8.0.2-Fabric.jar"),
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACsplhy-BYaFkmZxpH7W6nGa/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.2-Fabric.jar"),
                                     "8.0.3",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAB6JSD2_By0Lnuw3q6udLTKa/LittleMaidReBirth/Fabric/1.20/old/LMRB-1.20.1-8.0.3-Fabric.jar"),
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAWcxUXZyAZWwYXxtIXwGe0a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.3-Fabric.jar"),
                                     "8.0.4",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABPlyUNrY1q9oj_vf9HTNwsa/LittleMaidReBirth/Fabric/1.20/old/LMRB-1.20.1-8.0.4-Fabric.jar"),
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABW-6Ew_yJuOx2Te6GLVkt7a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.4-Fabric.jar"),
                                     "8.0.5",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACVs6yBeVaY96D3fylauNMja/LittleMaidReBirth/Fabric/1.20/old/LMRB-1.20.1-8.0.5-Fabric.jar"),
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAA95Ypjn5CBue-6qnaf-3Qa/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.5-Fabric.jar"),
                                     "8.0.6",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAZb6-4TsOTK4ZWHoAeYP3va/LittleMaidReBirth/Fabric/1.20/old/LMRB-1.20.1-8.0.6-Fabric.jar"),
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACGwVad1wMb7wN8xsdIw-j_a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.6-Fabric.jar"),
                                     "8.0.7",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAB7VmDzqw7cm0yGA99uwOywa/LittleMaidReBirth/Fabric/1.20/old/LMRB-1.20.1-8.0.7-Fabric.jar"),
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAEJCAOm-eo7TkSh-Omfs84a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.7-Fabric.jar"),
                                     "8.0.8",
-                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABsUzcvz87L8DNqi5iqSYsua/LittleMaidReBirth/Fabric/1.20/LMRB-1.20.1-8.0.8-Fabric.jar"))
-                    ));
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAW_Ug8Db8DtOqXYy6a0rD9a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.8-Fabric.jar"),
+                                    "8.1.0",
+                                    JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AADm1YQl_CPcBICIo6yXI8pFa/LittleMaidReBirth/Fabric/1.20-1.20.1/LMRB-1.20.1-8.1.0-Fabric.jar"))
+                    ),
+                    e("1.20.1", Map.of(
+                            "8.0.0",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABaiDs0fP8zHmuYTQmwYgX3a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.0-Fabric.jar"),
+                            "8.0.1",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABBiAiRY_99UDkmDx3f1rq7a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.1-Fabric.jar"),
+                            "8.0.2",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACsplhy-BYaFkmZxpH7W6nGa/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.2-Fabric.jar"),
+                            "8.0.3",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAWcxUXZyAZWwYXxtIXwGe0a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.3-Fabric.jar"),
+                            "8.0.4",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABW-6Ew_yJuOx2Te6GLVkt7a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.4-Fabric.jar"),
+                            "8.0.5",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAA95Ypjn5CBue-6qnaf-3Qa/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.5-Fabric.jar"),
+                            "8.0.6",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACGwVad1wMb7wN8xsdIw-j_a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.6-Fabric.jar"),
+                            "8.0.7",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAEJCAOm-eo7TkSh-Omfs84a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.7-Fabric.jar"),
+                            "8.0.8",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAW_Ug8Db8DtOqXYy6a0rD9a/LittleMaidReBirth/Fabric/1.20-1.20.1/old/LMRB-1.20.1-8.0.8-Fabric.jar"),
+                            "8.1.0",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AADm1YQl_CPcBICIo6yXI8pFa/LittleMaidReBirth/Fabric/1.20-1.20.1/LMRB-1.20.1-8.1.0-Fabric.jar"))
+                    ),
+                    e("1.20.2", Map.of(
+                            "9.0.1",
+                            JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AACikLILn-s3YQHe1DaIlYVva/LittleMaidReBirth/Fabric/1.20.2/LMRB-1.20.2-9.0.1-Fabric.jar")
+                    ))
+            );
 
     private static <K, V> Map.Entry<K, V> e(K key, V value) {
         return Map.entry(key, value);

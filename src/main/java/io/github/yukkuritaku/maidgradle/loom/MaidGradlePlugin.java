@@ -129,7 +129,9 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 try {
                     project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
                     project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
-                }catch (Exception ignored){}
+                } catch (Exception ignored){
+
+                }
                 LoomDependencyManager dependencyManager = new LoomDependencyManager();
                 extension.setDependencyManager(dependencyManager);
                 dependencyManager.handleDependencies(project, sharedServiceManager);

@@ -245,7 +245,8 @@ public class LmmlJarUrlMap {
                                     "https://www.dropbox.com/sh/tzkdz46y67tuohx/AADFacdMntD4vOPqrz4npgYla/LittleMaidModelLoader/Fabric/1.19.2/old/LMML-1.19.2-5.2.2-Fabric.jar",
                                     "https://www.dropbox.com/sh/tzkdz46y67tuohx/AACDWb7rOs6rUk057nduaS_la/LittleMaidModelLoader/Fabric/1.19.2/old/LMML-1.19.2-5.2.2-fabric-dev.jar",
                                     "https://www.dropbox.com/sh/tzkdz46y67tuohx/AAA--sQQxx3CWd4ex-j-2S23a/LittleMaidModelLoader/Fabric/1.19.2/old/LMML-1.19.2-5.2.2-sources.jar"),
-                            "5.2.3", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAChwEiTvinWk9wyejgZpFSNa/LittleMaidModelLoader/Fabric/1.19.2/LMML-1.19.2-5.2.3-Fabric.jar")
+                            "5.2.3", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAC2aXaQj29QGJwQ9M1AotT1a/LittleMaidModelLoader/Fabric/1.19.2/old/LMML-1.19.2-5.2.3-Fabric.jar"),
+                            "5.2.4", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AADcxqv0qTV55RLGnBPrC2Iva/LittleMaidModelLoader/Fabric/1.19.2/LMML-1.19.2-5.2.4-Fabric.jar")
                     )),
                     e("1.19.3", Map.of(
                             "6.0.0", JarMetadata.create(
@@ -257,11 +258,21 @@ public class LmmlJarUrlMap {
                             "6.0.2", JarMetadata.create(
                             "https://www.dropbox.com/sh/tzkdz46y67tuohx/AADTTZblojACvCmC3zkmMRNoa/LittleMaidModelLoader/Fabric/1.19.3/LMML-1.19.3-6.0.2-Fabric.jar",
                             "https://www.dropbox.com/sh/tzkdz46y67tuohx/AACoR9rvV5_V9cHYhmfVnORMa/LittleMaidModelLoader/Fabric/1.19.3/LMML-1.19.3-6.0.2-fabric-dev.jar"))),
-                    e("1.19.4", Map.of("7.0.1", JarMetadata.create(
-                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AACfN2ElnIk5E0Q6utFlXalsa/LittleMaidModelLoader/Fabric/1.19.4/LMML-1.19.4-7.0.1-Fabric.jar",
-                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AADVWJMUUvaawUdHvo9LEw73a/LittleMaidModelLoader/Fabric/1.19.4/LMML-1.19.4-7.0.1-fabric-dev.jar",
-                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAui1mMt7oD81aFSYTvLSdXa/LittleMaidModelLoader/Fabric/1.19.4/LMML-1.19.4-7.0.1-sources.jar"))),
-                    e("1.20", Map.of("8.0.0", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABd4Q-tbT3q6EXTUhCpWfE0a/LittleMaidModelLoader/Fabric/1.20/LMML-1.20.1-8.0.0-Fabric.jar")))
+                    e("1.19.4", Map.of(
+                            "7.0.1", JarMetadata.create(
+                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AABz1MDJe8ekNYFapSZgm9yGa/LittleMaidModelLoader/Fabric/1.19.4/old/LMML-1.19.4-7.0.1-Fabric.jar",
+                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AABkqj43qhrAt9p8CD8uu1KBa/LittleMaidModelLoader/Fabric/1.19.4/old/LMML-1.19.4-7.0.1-fabric-dev.jar",
+                            "https://www.dropbox.com/sh/tzkdz46y67tuohx/AADLVjMixbo0EluhEoqOvPjba/LittleMaidModelLoader/Fabric/1.19.4/old/LMML-1.19.4-7.0.1-sources.jar"),
+                            "7.0.2", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AADjmq4kLbJ6hTNs7YrXQUuKa/LittleMaidModelLoader/Fabric/1.19.4/LMML-1.19.4-7.0.2-Fabric.jar")
+                    )),
+                    e("1.20", Map.of(
+                            "8.0.0", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABBY2wrG2dgj5NjycT2fSjIa/LittleMaidModelLoader/Fabric/1.20-1.20.1/old/LMML-1.20.1-8.0.0-Fabric.jar"),
+                            "8.0.1", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AADRIrQjCjmE_fFST7yK15IKa/LittleMaidModelLoader/Fabric/1.20-1.20.1/LMML-1.20.1-8.0.1-Fabric.jar"))),
+
+                    e("1.20.1", Map.of(
+                            "8.0.0", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AABBY2wrG2dgj5NjycT2fSjIa/LittleMaidModelLoader/Fabric/1.20-1.20.1/old/LMML-1.20.1-8.0.0-Fabric.jar"),
+                            "8.0.1", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AADRIrQjCjmE_fFST7yK15IKa/LittleMaidModelLoader/Fabric/1.20-1.20.1/LMML-1.20.1-8.0.1-Fabric.jar"))),
+                    e("1.20.2", Map.of("9.0.1", JarMetadata.create("https://www.dropbox.com/sh/tzkdz46y67tuohx/AAAFfKTC4hd6x-4nbmifBDRfa/LittleMaidModelLoader/Fabric/1.20.2/LMML-1.20.2-9.0.1-Fabric.jar")))
             );
 
 

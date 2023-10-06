@@ -1,6 +1,8 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
+import io.github.yukkuritaku.maidgradle.loom.MaidGradlePlugin;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
+import net.fabricmc.loom.util.download.DownloadException;
 import net.fabricmc.loom.util.download.DownloadExecutor;
 import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
 import net.fabricmc.loom.util.gradle.ProgressGroup;
@@ -60,7 +62,7 @@ public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
                 String lmmlSourceFileName = lastStr("/", lmmlSourcesDownloadUrl).replace("?dl=1", "");
                 getMaidExtension()
                         .download(lmmlSourcesDownloadUrl)
-                        .progress(new GradleDownloadProgressListener("LittleMaidModelLoader Sources", progressGroup::createProgressLogger))
+                        .progress(new GradleDownloadProgressListener("LittleMaidModelLoader Source", progressGroup::createProgressLogger))
                         .downloadPathAsync(getMaidExtension().getLMMLOutputDirectory().get().file(lmmlSourceFileName).getAsFile().toPath(), executor);
             }
             getProject().getLogger().lifecycle("Current LittleMaidReBirth version: {}", getLittleMaidReBirthVersion().get());
@@ -87,9 +89,14 @@ public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
                 String lmrbSourceFileName = lastStr("/", lmrbSourceDownloadUrl).replace("?dl=1", "");
                 getMaidExtension()
                         .download(lmrbSourceDownloadUrl)
-                        .progress(new GradleDownloadProgressListener("LittleMaidReBirth Dev", progressGroup::createProgressLogger))
+                        .progress(new GradleDownloadProgressListener("LittleMaidReBirth Source", progressGroup::createProgressLogger))
                         .downloadPathAsync(getMaidExtension().getLMRBOutputDirectory().get().file(lmrbSourceFileName).getAsFile().toPath(), executor);
             }
+        }catch (DownloadException e){
+            getProject().getLogger().error("""
+Download failed, maybe json download url outdated, please contact developer or create issue ("https://github.com/Yukkuritaku/maid-gradle/issues") to update json!
+ダウンロードに失敗しました。jsonのダウンロードurlが古い可能性があります。開発者にコンタクトするかgithubのissue("https://github.com/Yukkuritaku/maid-gradle/issues")でアップデートを申請してください！
+""", e);
         }
         getProject().getLogger().lifecycle(":Done!");
     }
