@@ -126,8 +126,10 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 }
                 //devファイルはどうやってfabricに入れればいいのかわからん
                 //今の所はremapされたjarをプロジェクトに入れるようにする
-                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
-                project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
+                try {
+                    project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
+                    project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
+                }catch (Exception ignored){}
                 LoomDependencyManager dependencyManager = new LoomDependencyManager();
                 extension.setDependencyManager(dependencyManager);
                 dependencyManager.handleDependencies(project, sharedServiceManager);
