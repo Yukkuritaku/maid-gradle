@@ -7,6 +7,7 @@ import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.task.BuildLittleMaidModelTask;
 import io.github.yukkuritaku.maidgradle.loom.task.DownloadLittleMaidJarTask;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
+import io.github.yukkuritaku.maidgradle.loom.util.Utils;
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
@@ -21,6 +22,7 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -126,9 +128,20 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 }
                 //devファイルはどうやってfabricに入れればいいのかわからん
                 //今の所はremapされたjarをプロジェクトに入れるようにする
+
                 try {
-                    project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
-                    project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
+                    //project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, MaidConstants.Dependencies.getLittleMaidModelLoader(project));
+                    //project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, MaidConstants.Dependencies.getLittleMaidReBirth(project));
+                    String lmmlFileName = Utils.lastStr("/", Objects.requireNonNull(MaidConstants.LittleMaidJarFileUrls
+                                    .getLMMLDownloadUrl(maidGradleExtension.getMinecraftVersion().get(),
+                                            maidGradleExtension.getLittleMaidModelLoaderVersion().get())))
+                            .replace("?dl=1", "");
+                    String lmrbFileName = Utils.lastStr("/", Objects.requireNonNull(MaidConstants.LittleMaidJarFileUrls
+                                    .getLMRBDownloadUrl(maidGradleExtension.getMinecraftVersion().get(),
+                                            maidGradleExtension.getLittleMaidReBirthVersion().get())))
+                            .replace("?dl=1", "");
+                    project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_MODEL_LOADER, project.files(lmmlOutputDir.replace(projectDir, "") + "/" + lmmlFileName));
+                    project.getDependencies().add(MaidConstants.Configurations.MOD_LITTLE_MAID_REBIRTH, project.files(lmrbOutputDir.replace(projectDir, "") + "/" + lmrbFileName));
                 } catch (Exception ignored){
 
                 }

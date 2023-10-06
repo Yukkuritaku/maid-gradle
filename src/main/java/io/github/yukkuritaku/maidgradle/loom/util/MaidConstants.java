@@ -26,9 +26,6 @@ public final class MaidConstants {
         }
 
         public static String versionConvert(String searchVersion){
-            if (searchVersion.contains("1.20.1")){
-                searchVersion = "1.20";
-            }
             return searchVersion;
         }
 
