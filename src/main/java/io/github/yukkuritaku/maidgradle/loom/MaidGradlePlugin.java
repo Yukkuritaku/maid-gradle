@@ -59,9 +59,11 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 downloadLittleMaidJarTask.getLittleMaidReBirthVersion().set(maidGradleExtension.getLittleMaidReBirthVersion());
                 downloadLittleMaidJarTask.getDownloadThreads().set(Math.min(Runtime.getRuntime().availableProcessors(), 6));
             });
+
             String projectDir = project.getLayout().getProjectDirectory().getAsFile().getAbsolutePath().replace("\\", "/") + "/";
             String lmmlOutputDir = maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().getAbsolutePath().replace("\\", "/");
             String lmrbOutputDir = maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().getAbsolutePath().replace("\\", "/");
+            //githubからバージョンのデータをダウンロード
             try {
                 project.getLogger().lifecycle("read littlemaid-modelloader-url.json from github");
                 String lmmlJson = maidGradleExtension
@@ -78,15 +80,19 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
             } catch (DownloadException e) {
                 throw new RuntimeException(e);
             }
+
+            //ファイルがない場合に新しく作る
             if (!maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().exists()) {
                 maidGradleExtension.getLMMLOutputDirectory().get().getAsFile().mkdir();
             }
             if (!maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().exists()) {
                 maidGradleExtension.getLMRBOutputDirectory().get().getAsFile().mkdir();
             }
+
             afterEvaluationWithService(project, sharedServiceManager -> {
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
                 project.getLogger().lifecycle(":setting up littlemaid dependencies");
+                //メイドさんのJarファイルをダウンロード
                 try {
                     downloadLittleMaidJars.get().downloadJars();
                 } catch (IOException e) {

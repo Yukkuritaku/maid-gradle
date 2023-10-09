@@ -38,23 +38,23 @@ pluginManagement {
 `build.gradle`のプラグインの`fabric-loom`の下に`io.github.yukkuritaku.maid-gradle`を追加し、maidgradleの設定を追加します。
 ```gradle
 plugins{
-    id 'fabric-loom' version '1.3-SNAPSHOT'
-    //適用するにはfabric-loomの下に設定する必要があります。
+    id 'fabric-loom' version '1.4-SNAPSHOT'
+    // 適用するにはfabric-loomの下に設定する必要があります。
     id 'io.github.yukkuritaku.maid-gradle'
     id 'maven-publish'
 }
 
 maidgradle {
-    //マイクラバージョン
+    // マイクラバージョン
     minecraftVersion("(使用したいマイクラバージョン)")
     
-    //LittleMaidModelLoaderのバージョン
+    // LittleMaidModelLoaderのバージョン
     littleMaidModelLoaderVersion("(使用したいLittleMaidModelLoaderのバージョン)")
     
-    //LittleMaidReBirthのバージョン
+    // LittleMaidReBirthのバージョン
     littleMaidReBirthVersion("(使用したいLittleMaidReBirthのバージョン)")
     
-    //りーどみーファイルの指定(拡張子まで一致させる必要があるよ)
+    // りーどみーファイルの指定(拡張子まで一致させる必要があるよ)
     readMeFile("LittleMaidModel_Readme.txt")
 }
 ```
@@ -64,16 +64,16 @@ maidgradle {
 
 ```gradle
 maidgradle {
-    //マイクラバージョン
+    // マイクラバージョン
     minecraftVersion("(使用したいマイクラバージョン)")
     
-    //LittleMaidModelLoaderのバージョン
+    // LittleMaidModelLoaderのバージョン
     littleMaidModelLoaderVersion("(使用したいLittleMaidModelLoaderのバージョン)")
     
-    //LittleMaidReBirthのバージョン
+    // LittleMaidReBirthのバージョン
     littleMaidReBirthVersion("(使用したいLittleMaidReBirthのバージョン)")
     
-    //りーどみーファイルの指定(拡張子まで一致させる必要があるよ)
+    // りーどみーファイルの指定(拡張子まで一致させる必要があるよ)
     readMeFile("LittleMaidModel_Readme.txt")
     
     zipConfig {
