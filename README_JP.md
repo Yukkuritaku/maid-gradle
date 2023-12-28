@@ -22,12 +22,7 @@ pluginManagement {
     repositories {
         // jitpackを追加する
         maven { url = 'https://jitpack.io' }
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        mavenCentral()
-        gradlePluginPortal()
+        // ...
     }
     // これを追加しないとダウンロード出来ない
     resolutionStrategy {
