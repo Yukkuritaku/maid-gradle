@@ -1,7 +1,7 @@
 日本語の方のREADMEは[こちら](https://github.com/Yukkuritaku/maid-gradle/blob/master/README_JP.md)
 
 # Maid Gradle
-This project is gradle plugin extension of (Fabric Loom)(https://github.com/FabricMC/fabric-loom).
+This project is gradle plugin extension of [Fabric Loom](https://github.com/FabricMC/fabric-loom).
 
 Currently, implemented task is zip building and download jar.
 
