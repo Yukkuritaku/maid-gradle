@@ -12,26 +12,27 @@ Task groups are included in `maidgradle`.
 - `downloadLittleMaidJars`: Download Littlemaid jar file. (this task is auto executing in reload the gradle.)
 Downloaded Jar file are placed in build directory.
 
-## Implement in your project
+## How to use in your project
 
 Create repository and script to pluginManagement in your `settings.gradle`.
 ```gradle
 pluginManagement {
-    resolutionStrategy {
-        eachPlugin {
-            if(requested.id.toString() == "io.github.yukkuritaku.maid-gradle")
-                useModule("com.github.Yukkuritaku.maid-gradle:io.github.yukkuritaku.maid-gradle.gradle.plugin:(Latest Version))")
-        }
-    }
     repositories {
         // add jitpack repository
         maven { url = 'https://jitpack.io' }
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
+        // ...
+    }
+    // add resolutionStrategy, mandatory for download maid-gradle plugin
+    resolutionStrategy {
+        eachPlugin {
+            switch (requested.id.toString()) {
+                case "io.github.yukkuritaku.maid-gradle": {
+                    useModule("com.github.Yukkuritaku.maid-gradle:io.github.yukkuritaku.maid-gradle.gradle.plugin:${requested.version}")
+                    break
+                }
+                default: break
+            }
         }
-        mavenCentral()
-        gradlePluginPortal()
     }
 }
 ```
@@ -40,7 +41,7 @@ Add `io.github.yukkuritaku.maid-gradle` below the `fabric-loom` plugin in your `
 plugins{
     id 'fabric-loom' version '1.4-SNAPSHOT'
     // This should be below the fabric-loom plugin
-    id 'io.github.yukkuritaku.maid-gradle'
+    id 'io.github.yukkuritaku.maid-gradle' version '(Your version here)'
     id 'maven-publish'
 }
 

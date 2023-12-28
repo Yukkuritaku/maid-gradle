@@ -19,13 +19,6 @@ English version of Readme is [here](https://github.com/Yukkuritaku/maid-gradle/b
 `settings.gradle`のpluginManagementにリポジトリとスクリプトを追加します。 
 ```gradle
 pluginManagement {
-    // これを追加しないとダウンロード出来ない
-    resolutionStrategy {
-        eachPlugin {
-            if(requested.id.toString() == "io.github.yukkuritaku.maid-gradle")
-                useModule("com.github.Yukkuritaku.maid-gradle:io.github.yukkuritaku.maid-gradle.gradle.plugin:使いたいバージョン")
-        }
-    }
     repositories {
         // jitpackを追加する
         maven { url = 'https://jitpack.io' }
@@ -36,6 +29,18 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    // これを追加しないとダウンロード出来ない
+    resolutionStrategy {
+        eachPlugin {
+            switch (requested.id.toString()) {
+                case "io.github.yukkuritaku.maid-gradle": {
+                    useModule("com.github.Yukkuritaku.maid-gradle:io.github.yukkuritaku.maid-gradle.gradle.plugin:${requested.version}")
+                    break
+                }
+                default: break
+            }
+        }
+    }
 }
 ```
 `build.gradle`のプラグインの`fabric-loom`の下に`io.github.yukkuritaku.maid-gradle`を追加し、maidgradleの設定を追加します。
@@ -43,7 +48,7 @@ pluginManagement {
 plugins{
     id 'fabric-loom' version '1.4-SNAPSHOT'
     // 適用するにはfabric-loomの下に設定する必要があります。
-    id 'io.github.yukkuritaku.maid-gradle'
+    id 'io.github.yukkuritaku.maid-gradle' version '(使いたいバージョン)'
     id 'maven-publish'
 }
 
