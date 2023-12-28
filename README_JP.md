@@ -1,5 +1,8 @@
+English version of Readme is [here](https://github.com/Yukkuritaku/maid-gradle/blob/master/README.md).
+
 # Maid Gradle
-このプロジェクトはまだ開発中です！
+
+このプロジェクトは[Fabric Loom](https://github.com/FabricMC/fabric-loom)の拡張プラグインです。
 
 現在導入しているタスクはメイドさんのjarダウンロードと、zipビルドです。
 

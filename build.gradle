@@ -6,7 +6,7 @@ plugins {
 
 group = 'io.github.yukkuritaku'
 def archiveName = 'maid-gradle'
-version = '1.0'
+version = '1.1'
 
 configurations {
     loom
@@ -62,7 +62,7 @@ gradlePlugin {
         maidGradle {
             id = 'io.github.yukkuritaku.maid-gradle'
             displayName = "Maid-Gradle"
-            description = "Building LittleMaidModel for Minecraft Fabric Modding developers."
+            description = "Build the LittleMaidModel for Minecraft Mod, LittleMaidReBirth."
             implementationClass = 'io.github.yukkuritaku.maidgradle.loom.bootstrap.MaidGradlePluginBootstrap'
             tags.set(['littlemaid', 'modding'])
         }

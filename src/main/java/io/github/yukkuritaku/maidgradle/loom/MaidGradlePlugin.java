@@ -12,23 +12,19 @@ import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.RemapConfigurationSettings;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.configuration.LoomDependencyManager;
-import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.download.DownloadException;
 import net.fabricmc.loom.util.gradle.GradleUtils;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import net.fabricmc.loom.util.service.ScopedSharedServiceManager;
 import net.fabricmc.loom.util.service.SharedServiceManager;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.PluginAware;
 import org.gradle.api.tasks.TaskContainer;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -50,9 +46,8 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 task.dependsOn(tasks.named("jar"));
                 task.setDescription("Build LittleMaid Model.");
             });
-            var downloadLittleMaidJars = tasks.register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class, task -> {
-                task.setDescription("Download LittleMaid Jar from dropbox. (This task is automatically runs in gradle configuration)");
-            });
+            var downloadLittleMaidJars = tasks.register("downloadLittleMaidJars", DownloadLittleMaidJarTask.class,
+                    task -> task.setDescription("Download LittleMaid Jar from dropbox. (This task is automatically runs in gradle configuration)"));
             downloadLittleMaidJars.configure(downloadLittleMaidJarTask -> {
                 downloadLittleMaidJarTask.getMinecraftVersion().set(maidGradleExtension.getMinecraftVersion());
                 downloadLittleMaidJarTask.getLittleMaidModelLoaderVersion().set(maidGradleExtension.getLittleMaidModelLoaderVersion());
@@ -159,6 +154,7 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
                 dependencyManager.handleDependencies(project, sharedServiceManager);
                 releaseLock(project);
                 extension.setRefreshDeps(previousRefreshDeps);
+                // LittleMaidModelDevelopment用に環境変数を追加
                 extension.getRuns().forEach(
                         runConfigSettings -> {
                             runConfigSettings.property("lmmd.dev.classes",
@@ -179,8 +175,8 @@ public class MaidGradlePlugin implements BootstrappedPlugin {
     private Path getLockFile(Project project) {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
         final Path cacheDirectory = extension.getFiles().getUserCache().toPath();
-        final String pathHash = Checksum.projectHash(project);
-        return cacheDirectory.resolve("." + pathHash + ".lock");
+        //final String pathHash = Checksum.projectHash(project);
+        return cacheDirectory.resolve("." + "maid-gradle" + ".lock");
     }
 
     private boolean getAndLock(Project project) {

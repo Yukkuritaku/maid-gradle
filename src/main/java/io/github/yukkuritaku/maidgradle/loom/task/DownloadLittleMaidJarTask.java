@@ -1,6 +1,6 @@
 package io.github.yukkuritaku.maidgradle.loom.task;
 
-import io.github.yukkuritaku.maidgradle.loom.MaidGradlePlugin;
+import io.github.yukkuritaku.maidgradle.loom.extension.MaidGradleExtension;
 import io.github.yukkuritaku.maidgradle.loom.util.MaidConstants;
 import io.github.yukkuritaku.maidgradle.loom.util.Utils;
 import net.fabricmc.loom.util.download.DownloadException;
@@ -13,6 +13,8 @@ import org.gradle.api.tasks.TaskAction;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.function.BiFunction;
 
 public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
 
@@ -32,61 +34,38 @@ public abstract class DownloadLittleMaidJarTask extends AbstractMaidTask {
         try (ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download LittleMaidModelLoader");
              DownloadExecutor executor = new DownloadExecutor(getDownloadThreads().get())
         ) {
-            String minecraftVersion = getMinecraftVersion().get();
-            String lmmlVersion = getLittleMaidModelLoaderVersion().get();
+            var minecraftVersion = getMinecraftVersion().get();
+            var lmmlVersion = getLittleMaidModelLoaderVersion().get();
             getProject().getLogger().lifecycle("Current Minecraft version: {}", minecraftVersion);
             getProject().getLogger().lifecycle("Current LittleMaidModelLoader version: {}", lmmlVersion);
 
-            String lmmlDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(minecraftVersion, lmmlVersion);
-            String lmmlFileName = Utils.lastStr("/", lmmlDownloadUrl).replace("?dl=1", "");
-            getMaidExtension()
-                    .download(lmmlDownloadUrl)
-                    .progress(new GradleDownloadProgressListener("LittleMaidModelLoader", progressGroup::createProgressLogger))
-                    .downloadPathAsync(getMaidExtension().getLMMLOutputDirectory().get().file(lmmlFileName).getAsFile().toPath(), executor);
+            //LittleMaidModelLoader
+            downloadJar(MaidConstants.LittleMaidJarFileUrls.getLMMLDownloadUrl(minecraftVersion, lmmlVersion),
+                    "LittleMaidModelLoader", progressGroup, executor, LittleMaidJarType.LMML);
 
-            String lmmlDevDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMMLDevDownloadUrl(minecraftVersion, lmmlVersion);
-            if (lmmlDevDownloadUrl != null) {
-                String lmmlDevFileName = Utils.lastStr("/", lmmlDevDownloadUrl).replace("?dl=1", "");
-                getMaidExtension()
-                        .download(lmmlDevDownloadUrl)
-                        .progress(new GradleDownloadProgressListener("LittleMaidModelLoader Dev", progressGroup::createProgressLogger))
-                        .downloadPathAsync(getMaidExtension().getLMMLOutputDirectory().get().file(lmmlDevFileName).getAsFile().toPath(), executor);
+            var lmmlDevDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMMLDevDownloadUrl(minecraftVersion, lmmlVersion);
+            if (lmmlDevDownloadUrl != null){
+                downloadJar(lmmlDevDownloadUrl, "LittleMaidModelLoader Dev", progressGroup, executor, LittleMaidJarType.LMML);
             }
 
-            String lmmlSourcesDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMMLSourceDownloadUrl(minecraftVersion, lmmlVersion);
+            var lmmlSourcesDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMMLSourceDownloadUrl(minecraftVersion, lmmlVersion);
             if (lmmlSourcesDownloadUrl != null){
-                String lmmlSourceFileName = Utils.lastStr("/", lmmlSourcesDownloadUrl).replace("?dl=1", "");
-                getMaidExtension()
-                        .download(lmmlSourcesDownloadUrl)
-                        .progress(new GradleDownloadProgressListener("LittleMaidModelLoader Source", progressGroup::createProgressLogger))
-                        .downloadPathAsync(getMaidExtension().getLMMLOutputDirectory().get().file(lmmlSourceFileName).getAsFile().toPath(), executor);
+                downloadJar(lmmlSourcesDownloadUrl, "LittleMaidModelLoader Source", progressGroup, executor, LittleMaidJarType.LMML);
             }
+
+            //LittleMaidReBirth
             getProject().getLogger().lifecycle("Current LittleMaidReBirth version: {}", getLittleMaidReBirthVersion().get());
+            downloadJar(MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(minecraftVersion, getLittleMaidReBirthVersion().get()),
+"LittleMaidReBirth", progressGroup, executor, LittleMaidJarType.LMRB);
 
-            String lmrbVersion = getLittleMaidReBirthVersion().get();
-            String lmrbDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMRBDownloadUrl(minecraftVersion, lmrbVersion);
-            String lmrbFileName = Utils.lastStr("/", lmrbDownloadUrl).replace("?dl=1", "");
-            getMaidExtension()
-                    .download(lmrbDownloadUrl)
-                    .progress(new GradleDownloadProgressListener("LittleMaidReBirth", progressGroup::createProgressLogger))
-                    .downloadPathAsync(getMaidExtension().getLMRBOutputDirectory().get().file(lmrbFileName).getAsFile().toPath(), executor);
-
-            String lmrbDevDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMRBDevDownloadUrl(minecraftVersion, lmrbVersion);
+            var lmrbDevDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMRBDevDownloadUrl(minecraftVersion, getLittleMaidReBirthVersion().get());
             if (lmrbDevDownloadUrl != null){
-                String lmrbDevFileName = Utils.lastStr("/", lmrbDevDownloadUrl).replace("?dl=1", "");
-                getMaidExtension()
-                        .download(lmrbDevDownloadUrl)
-                        .progress(new GradleDownloadProgressListener("LittleMaidReBirth Dev", progressGroup::createProgressLogger))
-                        .downloadPathAsync(getMaidExtension().getLMRBOutputDirectory().get().file(lmrbDevFileName).getAsFile().toPath(), executor);
+                downloadJar(lmrbDevDownloadUrl, "LittleMaidReBirth Dev", progressGroup, executor, LittleMaidJarType.LMRB);
             }
 
-            String lmrbSourceDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMRBSourceDownloadUrl(minecraftVersion, lmrbVersion);
+            var lmrbSourceDownloadUrl = MaidConstants.LittleMaidJarFileUrls.getLMRBSourceDownloadUrl(minecraftVersion, getLittleMaidReBirthVersion().get());
             if (lmrbSourceDownloadUrl != null){
-                String lmrbSourceFileName = Utils.lastStr("/", lmrbSourceDownloadUrl).replace("?dl=1", "");
-                getMaidExtension()
-                        .download(lmrbSourceDownloadUrl)
-                        .progress(new GradleDownloadProgressListener("LittleMaidReBirth Source", progressGroup::createProgressLogger))
-                        .downloadPathAsync(getMaidExtension().getLMRBOutputDirectory().get().file(lmrbSourceFileName).getAsFile().toPath(), executor);
+                downloadJar(lmrbSourceDownloadUrl, "LittleMaidReBirth Source", progressGroup, executor, LittleMaidJarType.LMRB);
             }
         }catch (DownloadException e){
             getProject().getLogger().error("""
@@ -95,5 +74,36 @@ Download failed, maybe json download url outdated, please contact developer or c
 """, e);
         }
         getProject().getLogger().lifecycle(":Done!");
+    }
+
+
+    private void downloadJar(String downloadUrl,
+                             String progressListenerName,
+                             ProgressGroup progressGroup,
+                             DownloadExecutor executor,
+                             LittleMaidJarType jarType){
+        getMaidExtension()
+                .download(downloadUrl)
+                .progress(new GradleDownloadProgressListener(progressListenerName, progressGroup::createProgressLogger))
+                .downloadPathAsync(
+                        jarType.toPath(Utils.lastStr("/", downloadUrl).replace("?dl=1", ""), getMaidExtension()),
+                        executor);
+
+    }
+
+    private enum LittleMaidJarType{
+        LMML((fileName, extension) -> extension.getLMMLOutputDirectory().get().file(fileName).getAsFile().toPath()),
+        LMRB((fileName, extension) -> extension.getLMRBOutputDirectory().get().file(fileName).getAsFile().toPath());
+
+        private final BiFunction<String, MaidGradleExtension, Path> toPathFunction;
+
+        LittleMaidJarType(BiFunction<String, MaidGradleExtension, Path> toPathFunction){
+            this.toPathFunction = toPathFunction;
+        }
+
+        public Path toPath(String fileName, MaidGradleExtension extension){
+            return this.toPathFunction.apply(fileName, extension);
+        }
+
     }
 }
